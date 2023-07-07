@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>D3 テスト</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+        // ここに D3 スクリプトを書きます。
+        // d3.select("body").append("p").text("新しいパラグラフ！");
+
+        // const dataset = [5, 10, 15, 20, 25];
+        // d3.select("body").selectAll("p")
+        //     .data(dataset)
+        //     .enter()
+        //     .append("p")
+        //     .text("新しいパラグラフ！");
+
+        const dataset = [5, 10, 15, 20, 25];
+        d3.select("body").selectAll("p")
+            .data(dataset)
+            .enter()
+            .append("p")
+            .text(function (d) { return d; })
+            .style("color", function (d) {
+                if (d > 15) {   // 15 が区切り
+                    return "red";
+                } else {
+                    return "black";
+                }
+            });
+
+    </script>
+</body>
+
+</html>
