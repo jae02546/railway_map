@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>正縮尺路線図</title>
+    <style>
+        .container {
+            display: flex;
+            /* Flexboxを使用します */
+            align-items: stretch;
+            /* 子要素を同じ高さにします */
+            height: 95vh;
+            /* コンテナの高さをビューポートの高さにします */
+        }
+
+        .selectWrapper {
+            width: 20%;
+            overflow: auto;
+            /* コンテンツが高さを超える場合、スクロールを表示します */
+        }
+
+        #listBoxCompany,
+        #listBoxLine {
+            width: 100%;
+            height: 100%;
+            /* selectの高さを親要素に合わせます */
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            /* Safari and Chrome */
+            -moz-appearance: none;
+            /* Firefox */
+            appearance: none;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            /* Add this */
+            width: 100%;
+            /* Add this */
+        }
+
+        #controlPanel {
+            display: flex;
+            justify-content: flex-start;
+            /* Change this */
+            /* justify-content: space-between; */
+            /* or use "flex-start" to align items to the left */
+        }
+
+        #divSvg {
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body onload="main()">
+    <div class="container">
+        <div class="selectWrapper">
+            <select id="listBoxCompany" size="2"></select>
+        </div>
+        <div class="selectWrapper">
+            <select id="listBoxLine" size="2"></select>
+        </div>
+        <div id="container">
+            <!-- <div id="controlPanel">
+                <input type="checkbox" id="checkBoxScale">路線毎スケール
+                <button id="buttonReset">ズームリセット</button>
+            </div> -->
+            <div id="divSvg">
+                <script src="https://d3js.org/d3.v7.min.js"></script>
+                <script src="railwayMap.js"></script>
+                <script src="railwayMapTools.js"></script>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
