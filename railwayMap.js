@@ -163,7 +163,6 @@ async function main() {
       if (event.type === "mousedown") {
         switch (event.button) {
           case 0: //左ボタン
-            // alert("mousedown")
             lastDownXY = [event.clientX, event.clientY];
             isDragging = true;
             break;
@@ -174,11 +173,12 @@ async function main() {
           default:
             break;
         }
+        // alert("mousedown " + lastDownXY + " " + isDragging)
       } else if (event.type === "touchstart") {
-        alert("touchstart")
         event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
         lastDownXY = [event.touches[0].clientX, event.touches[0].clientY];
         isDragging = true;
+        alert("touchstart " + lastDownXY + " " + isDragging)
       }
     }
 
@@ -265,7 +265,7 @@ async function main() {
             lastPara.translate[1] + event.clientY - lastDownXY[1]
           ];
         } else if (event.type === "touchend") {
-          alert("touchend")
+          alert("touchend");
           event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           foo = [
             lastPara.translate[0] + event.touches[0].clientX - lastDownXY[0],
