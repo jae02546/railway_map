@@ -1,4 +1,4 @@
-//* geojson形式ファイルの読込
+//geojson形式ファイルの読込
 async function getGeoJson(fileName) {
   //引数:fileName:geojson形式ファイル名
   //  同一フォルダに存在する場合はファイル名のみ
@@ -25,7 +25,7 @@ async function getGeoJson(fileName) {
     });
 }
 
-//* 事業者名リスト取得
+//事業者名リスト取得
 async function getCompanyList(geoJson) {
   //引数:geoJson
   //戻り値:事業者名set
@@ -34,11 +34,11 @@ async function getCompanyList(geoJson) {
   geoJson.features.forEach(element => {
     set.add(element.properties.N02_004);
   });
-  //   console.log(getCompanyList.name, "size:", set.size);
+  // console.log(funName, "size:", set.size);
   return set;
 }
 
-//* 路線名リスト取得
+//路線名リスト取得
 async function getLineList(geoJson, companyName) {
   //引数:
   //geoJson
@@ -51,12 +51,12 @@ async function getLineList(geoJson, companyName) {
       set.add(element.properties.N02_003);
     }
   });
-  //console.log(getCompanyList.name, "size:", set.size);
+  // console.log(funName, "size:", set.size);
   return set;
 }
 
 //geoJsonからgeometry取得
-async function getGeometry2(geoJson, range, companyName, lineName) {
+async function getGeometry(geoJson, range, companyName, lineName) {
   //引数:
   //geoJson
   //range:取得経度緯度範囲（nullは範囲判断無し）
@@ -64,11 +64,11 @@ async function getGeometry2(geoJson, range, companyName, lineName) {
   //companyName:事業者名、nullは全事業者
   //lineName:路線名、nullは全路線
   //戻り値:geoJson.features.geometry[]
-  //  All:range内の全路線（指定事業者全路線を除く）
-  //  Company:指定事業者全路線（指定路線を除く）
+  //  All:range内の全路線（指定された事業者全路線を除く）
+  //  Company:指定事業者全路線（指定された路線を除く）
   //  Line:指定路線
-  const funName = getGeometry2.name;
-  console.log(funName, range);
+  const funName = getGeometry.name;
+  // console.log(funName, range);
   let all = [];
   let company = [];
   let line = [];
@@ -128,7 +128,6 @@ async function GetViewportRange(lastPara) {
   let geoMin = projection.invert([0, 0]);
   let geoMax = projection.invert([lastPara.width, lastPara.height]);
 
-  // return [geoMin, geoMax];
   return [[geoMin[0], geoMax[1]], [geoMax[0], geoMin[1]]];
 }
 
@@ -187,7 +186,7 @@ async function getLastPara(eleName, geo) {
   let funName = getLastPara.name;
   //ビューポートに表示する地理的範囲（最小値最大値）取得
   let geoRange = await getGeoRange(geo);
-  console.log(funName, "getGeoRange", geoRange);
+  // console.log(funName, "getGeoRange", geoRange);
   //D3.jsのsvg作成
   let ds = document.getElementById(eleName);
   let w = ds.offsetWidth;
@@ -220,10 +219,6 @@ async function getLastPara(eleName, geo) {
       (r0[1] - r1[1]) / (h - padding * 2)
     );
   let t = [(w - s * (r0[0] + r1[0])) / 2, (h - s * (r0[1] + r1[1])) / 2];
-  // console.log(funName, "scale:", s);
-  // console.log(funName, "translate:", t);
-  //追加したsvgは削除しておく
-  // d3.select("#" + eleName).selectAll("svg").remove();
   //戻り値
   //width:ビューポート幅
   //height:ビューポート高さ
@@ -242,7 +237,6 @@ async function getLastPara(eleName, geo) {
 
 //エレメント削除
 async function removeElement(eleName) {
-  // d3.select("#" + eleName).selectAll("svg").remove();
   //指定id配下のエレメントを全て削除する
   let element = document.getElementById(eleName);
   while (element.firstChild) {
@@ -250,22 +244,15 @@ async function removeElement(eleName) {
   }
 }
 
-//svgエレメント追加3
-// async function appendSvg3(eleName, lastPara, geoAll, geoCompany, geoLine) {
-async function appendSvg3(eleName, lastPara, geo) {
-  // //引数
-  // //geoPath:座標データ（描画）
-  // //lastPara.scale:スケール
-  // //para.translate:表示中心
-  // //eleName:追加するエレメント
-  let funName = appendSvg3.name;
-  console.log(funName, "", lastPara);
-  // // //D3.jsのsvg作成
-  // let ds = document.getElementById(eleName);
-  // let w = ds.offsetWidth;
-  // let h = ds.offsetHeight;
-  // let svg = d3
-  //   .select("#" + eleName).select("svg");
+//svg追加
+async function appendSvg(eleName, lastPara, geo) {
+  //引数
+  //eleName:追加するエレメント
+  //lastPara:
+  //geo:geoデータ
+  let funName = appendSvg.name;
+  // console.log(funName, "", lastPara);
+  //D3.jsのsvg作成
   let svg = d3
     .select("#" + eleName)
     .append("svg")
@@ -277,8 +264,8 @@ async function appendSvg3(eleName, lastPara, geo) {
   // プロジェクションにスケールとtranslateを設定
   projection.scale(lastPara.scale).translate(lastPara.translate);
   // GeoPath ジェネレータを設定
-
   let pathGenerator = d3.geoPath().projection(projection);
+
   // SVG上に描画
   g
     .selectAll(".path-all")
