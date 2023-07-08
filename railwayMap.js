@@ -5,18 +5,15 @@ async function main() {
   const eleLine = "listBoxLine";
   const eleSvg = "divSvg";
   //事業者リストボックス、路線リストボックス、svg
-  let lbCompany = document.getElementById(eleCompany);
-  let lbLine = document.getElementById(eleLine);
-  let svg = document.getElementById(eleSvg);
+  const lbCompany = document.getElementById(eleCompany);
+  const lbLine = document.getElementById(eleLine);
+  const svg = document.getElementById(eleSvg);
   //選択中事業者オプション、選択中路線オプション
   let soCompany = null;
   let soLine = null;
-  //表示中のgeoデータ
+  //現在のgeoデータ
   let lastGeo = null;
-  // let lastGeoAll = null;
-  // let lastGeoCompany = null;
-  // let lastGeoLine = null;
-  //geoデータ最小値最大値、スケール、経度0緯度0位置
+  //現在のパラメータ（幅、高さ、経度緯度範囲、スケール、経度0緯度0位置）
   let lastPara = null;
 
   //json取得
@@ -26,19 +23,10 @@ async function main() {
 
   //全事業者全路線表示（初期表示）
   {
-    // lastGeoAll = await getGeometry(geoJson, null, null);
-    // let foo = await getGeometry2(geoJson, null, null, null);
-    // console.log(funName, "getGeometry2", foo);
-    // lastGeoAll = foo.All;
-    lastGeo = await getGeometry2(geoJson, null, null, null);
+    lastGeo = await getGeometry(geoJson, null, null, null);
     lastPara = await getLastPara(eleSvg, lastGeo.All);
-    // console.log(funName, lastPara);
     await removeElement(eleSvg);
-    // await appendSvg3(eleSvg, lastPara, lastGeoAll, null, null);
-    await appendSvg3(eleSvg, lastPara, lastGeo);
-
-    // lastPara = await appendSvg(eleSvg, lastGeoAll, null, null);
-    // console.log(funName, lastPara);
+    await appendSvg(eleSvg, lastPara, lastGeo);
   }
 
   //事業者リストボックス事業者名追加
@@ -77,7 +65,7 @@ async function main() {
       //選択事業者全路線表示
       {
         //選択された事業者をビューポート全体に表示するlastPara取得
-        let bar = await getGeometry2(geoJson, null, soCompany.text, null);
+        let bar = await getGeometry(geoJson, null, soCompany.text, null);
         lastPara = await getLastPara(eleSvg, bar.Company);
 
         //これはうまくいく（これだとビューポート外も全路線が表示される）
@@ -86,12 +74,9 @@ async function main() {
 
         let baz = await GetViewportRange(lastPara);
         // let que = await getGeometry2(geoJson, baz, soCompany.text, null);
-        lastGeo = await getGeometry2(geoJson, baz, soCompany.text, null);
-        // lastGeoAll = que.All;
-        // lastGeoCompany = que.Company;
-        // lastGeoLine = que.Line;
+        lastGeo = await getGeometry(geoJson, baz, soCompany.text, null);
         await removeElement(eleSvg);
-        await appendSvg3(eleSvg, lastPara, lastGeo);
+        await appendSvg(eleSvg, lastPara, lastGeo);
       }
     }
   }
@@ -101,13 +86,9 @@ async function main() {
     lbLine.addEventListener("change", async function() {
       soLine = this.options[this.selectedIndex];
       let baz = await GetViewportRange(lastPara);
-      lastGeo = await getGeometry2(geoJson, baz, soCompany.text, soLine.text);
-      // let que = await getGeometry2(geoJson, baz, soCompany.text, soLine.text);
-      // lastGeoAll = que.All;
-      // lastGeoCompany = que.Company;
-      // lastGeoLine = que.Line;
+      lastGeo = await getGeometry(geoJson, baz, soCompany.text, soLine.text);
       await removeElement(eleSvg);
-      await appendSvg3(eleSvg, lastPara, lastGeo);
+      await appendSvg(eleSvg, lastPara, lastGeo);
     });
   }
 
@@ -120,7 +101,6 @@ async function main() {
       let lastHeight =
         lastPara.scale * (lastPara.range[1][1] - lastPara.range[0][1]);
       //今回scale（event.deltaY +:縮小 -:拡大）
-      // console.log(funName, "event.deltaY", event.deltaY);
       let scale = lastPara.scale;
       if (event.deltaY >= 0) {
         scale *= 0.95;
@@ -152,9 +132,9 @@ async function main() {
       let foo = await GetViewportRange(lastPara);
       let cText = soCompany != null ? soCompany.text : null;
       let lText = soLine != null ? soLine.text : null;
-      lastGeo = await getGeometry2(geoJson, foo, cText, lText);
+      lastGeo = await getGeometry(geoJson, foo, cText, lText);
       await removeElement(eleSvg);
-      await appendSvg3(eleSvg, lastPara, lastGeo);
+      await appendSvg(eleSvg, lastPara, lastGeo);
     });
   }
 
@@ -163,8 +143,11 @@ async function main() {
     let lastDownXY = null; //マウスダウンxy座標
     let isDragging = false; //true:ドラッグ中
 
-    //左ボタン押下時の座標を保存、ドラッグ開始
-    svg.addEventListener("mousedown", event => {
+    //開始
+    svg.addEventListener("mousedown", mousedownEvent);
+    svg.addEventListener("touchstart", mousedownEvent);
+
+    async function mousedownEvent() {
       switch (event.button) {
         case 0: //左ボタン
           lastDownXY = [event.clientX, event.clientY];
@@ -177,10 +160,29 @@ async function main() {
         default:
           break;
       }
-    });
+    }
+
+    // //左ボタン押下時の座標を保存、ドラッグ開始
+    // svg.addEventListener("mousedown", event => {
+    //   switch (event.button) {
+    //     case 0: //左ボタン
+    //       lastDownXY = [event.clientX, event.clientY];
+    //       isDragging = true;
+    //       break;
+    //     case 1: //ホイールボタン
+    //       break;
+    //     case 2: //右ボタン
+    //       break;
+    //     default:
+    //       break;
+    //   }
+    // });
 
     //ドラッグ
-    svg.addEventListener("mousemove", async function(event) {
+    svg.addEventListener("mousemove", mousemoveEvent);
+    svg.addEventListener("touchmove", mousemoveEvent);
+
+    async function mousemoveEvent() {
       if (isDragging) {
         let foo = lastPara.scale;
         let bar = [
@@ -195,12 +197,34 @@ async function main() {
           translate: bar
         };
         await removeElement(eleSvg);
-        await appendSvg3(eleSvg, baz, lastGeo);
+        await appendSvg(eleSvg, baz, lastGeo);
       }
-    });
+    }
+
+    // svg.addEventListener("mousemove", async function(event) {
+    //   if (isDragging) {
+    //     let foo = lastPara.scale;
+    //     let bar = [
+    //       lastPara.translate[0] + event.clientX - lastDownXY[0],
+    //       lastPara.translate[1] + event.clientY - lastDownXY[1]
+    //     ];
+    //     let baz = {
+    //       width: lastPara.width,
+    //       height: lastPara.height,
+    //       range: lastPara.range,
+    //       scale: foo,
+    //       translate: bar
+    //     };
+    //     await removeElement(eleSvg);
+    //     await appendSvg(eleSvg, baz, lastGeo);
+    //   }
+    // });
 
     //ドラッグ終了
-    svg.addEventListener("mouseup", async function(event) {
+    svg.addEventListener("mouseup", mouseupEvent);
+    svg.addEventListener("touchend", mouseupEvent);
+
+    async function mouseupEvent() {
       //ビューポート外でmouseupしてもイベントは発生しない
       //ドラッグしたままビューポート外に出た等
       if (isDragging) {
@@ -217,173 +241,41 @@ async function main() {
           translate: foo
         };
 
-        let foo2 = await GetViewportRange(lastPara);
+        let bar = await GetViewportRange(lastPara);
         let cText = soCompany != null ? soCompany.text : null;
         let lText = soLine != null ? soLine.text : null;
-        lastGeo = await getGeometry2(geoJson, foo2, cText, lText);
+        lastGeo = await getGeometry(geoJson, bar, cText, lText);
         await removeElement(eleSvg);
-        await appendSvg3(eleSvg, lastPara, lastGeo);
+        await appendSvg(eleSvg, lastPara, lastGeo);
       }
       isDragging = false;
-    });
-  }
-}
-
-//geoJsonからgeometry取得
-async function getGeometry(geoJson, companyName, lineName) {
-  //引数:
-  //geoJson
-  //companyName:事業者名、nullは全事業者
-  //lineName:路線名、nullは全路線
-  //戻り値:geoJson.features.geometry[]
-  let result = [];
-  geoJson.features.forEach(element => {
-    if (
-      (null == lineName || element.properties.N02_003 == lineName) &&
-      (null == companyName || element.properties.N02_004 == companyName)
-    ) {
-      result.push(element.geometry);
     }
-  });
-  //   console.log(getGeometry.name, "length:", result.length);
-  return result;
-}
 
-//svg追加
-async function appendSvg(eleName, geoAll, geoCompany, geoLine) {
-  //引数
-  //eleName:追加するエレメント
-  //geoAll:geoデータ（scaleとtranslateの計算に使用、黒）
-  //geoCompany:事業者geoデータ（nullの場合は描画しない、青）
-  //geoLine:路線geoデータ（nullの場合は描画しない、赤）
-  //戻り値 width,height,range,scale,translate
-  let funName = appendSvg.name;
-  //ビューポートに表示する地理的範囲（最小値最大値）取得
-  let geoRange = await getGeoRange(geoAll);
-  // console.log(appendSvg.name, "geoRange:", geoRange);
-  //D3.jsのsvg作成
-  let ds = document.getElementById(eleName);
-  let w = ds.offsetWidth;
-  let h = ds.offsetHeight;
-  console.log(funName, "width:", w, "height:", h);
-  let svg = d3
-    .select("#" + eleName)
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);
-  let g = svg.append("g");
-  //プロジェクションを作成（初期化）
-  let projection = d3.geoMercator();
-  projection
-    .scale(1) // 一旦、スケールを1に設定
-    .translate([0, 0]); // 一旦、translateを0に設定
-  //地理的範囲をビューポートのピクセル範囲に変換
-  //[[xmin, ymin], [xmax, ymax]]
-  let r0 = projection(geoRange[0]); //最小値
-  let r1 = projection(geoRange[1]); //最大値
-  console.log(appendSvg.name, "r0 r1:", r0, r1);
-  //paddingを設定 (5%)
-  // var padding = 0.05 * Math.min(w, h);
-  let padding = 0;
-  //スケールとセンターを計算xz
-  let s =
-    1 /
-    Math.max(
-      (r1[0] - r0[0]) / (w - padding * 2),
-      (r0[1] - r1[1]) / (h - padding * 2)
-    );
-  let t = [(w - s * (r0[0] + r1[0])) / 2, (h - s * (r0[1] + r1[1])) / 2];
-  console.log(appendSvg.name, "scale:", s);
-  console.log(appendSvg.name, "translate:", t);
+    // svg.addEventListener("mouseup", async function(event) {
+    //   //ビューポート外でmouseupしてもイベントは発生しない
+    //   //ドラッグしたままビューポート外に出た等
+    //   if (isDragging) {
+    //     //mouseup時のtranslateを保存
+    //     let foo = [
+    //       lastPara.translate[0] + event.clientX - lastDownXY[0],
+    //       lastPara.translate[1] + event.clientY - lastDownXY[1]
+    //     ];
+    //     lastPara = {
+    //       width: lastPara.width,
+    //       height: lastPara.height,
+    //       range: lastPara.range,
+    //       scale: lastPara.scale,
+    //       translate: foo
+    //     };
 
-  // プロジェクションにスケールとtranslateを設定
-  projection.scale(s).translate(t);
-  // GeoPath ジェネレータを設定
-  let pathGenerator = d3.geoPath().projection(projection);
-
-  //SVG上に描画
-  g
-    .selectAll(".path-all")
-    .data(geoAll)
-    .enter()
-    .append("path")
-    .attr("class", "path-all")
-    .attr("d", pathGenerator)
-    .style("stroke", "black") // 線の色
-    .style("fill", "none"); // 塗りつぶしなし
-
-  if (geoCompany != null) {
-    g
-      .selectAll(".path-company")
-      .data(geoCompany)
-      .enter()
-      .append("path")
-      .attr("class", "path-company")
-      .attr("d", pathGenerator)
-      .style("stroke", "blue") // 線の色
-      .style("fill", "none"); // 塗りつぶしなし
+    //     let bar = await GetViewportRange(lastPara);
+    //     let cText = soCompany != null ? soCompany.text : null;
+    //     let lText = soLine != null ? soLine.text : null;
+    //     lastGeo = await getGeometry(geoJson, bar, cText, lText);
+    //     await removeElement(eleSvg);
+    //     await appendSvg(eleSvg, lastPara, lastGeo);
+    //   }
+    //   isDragging = false;
+    // });
   }
-
-  if (geoLine != null) {
-    g
-      .selectAll(".path-line")
-      .data(geoLine)
-      .enter()
-      .append("path")
-      .attr("class", "path-line")
-      .attr("d", pathGenerator)
-      .style("stroke", "red") // 線の色
-      .style("fill", "none"); // 塗りつぶしなし
-  }
-
-  //戻り値
-  //width:ビューポート幅
-  //height:ビューポート高さ
-  //range:表示データ経度x緯度y最小値最大値(rad)
-  //      [[xmin, ymin], [xmax, ymax]]
-  //scale:表示幅(px)/表示角度(rad)
-  //translate:[x,y](px)ビューポート左下から見た経度0緯度0位置
-  return {
-    width: w,
-    height: h,
-    range: [r0, r1],
-    scale: s,
-    translate: t
-  };
-}
-
-//svg追加2
-async function appendSvg2(geoPath, para, eleName) {
-  //引数
-  //geoPath:座標データ（描画）
-  //para.scale:スケール
-  //para.translate:表示中心
-  //eleName:追加するエレメント
-  let funName = appendSvg2.name;
-  //D3.jsのsvg作成
-  let ds = document.getElementById(eleName);
-  let w = ds.offsetWidth;
-  let h = ds.offsetHeight;
-  // console.log(funName, "width:", w, "height:", h);
-  var svg = d3
-    .select("#" + eleName)
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);
-  var g = svg.append("g");
-  //プロジェクションを作成（初期化）
-  var projection = d3.geoMercator();
-  // プロジェクションにスケールとtranslateを設定
-  projection.scale(para.scale).translate(para.translate);
-  // GeoPath ジェネレータを設定
-  var pathGenerator = d3.geoPath().projection(projection);
-  //SVG上に描画
-  g
-    .selectAll("path")
-    .data(geoPath)
-    .enter()
-    .append("path")
-    .attr("d", pathGenerator)
-    .style("stroke", "black") // 線の色
-    .style("fill", "none"); // 塗りつぶしなし
 }
