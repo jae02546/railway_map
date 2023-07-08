@@ -147,18 +147,36 @@ async function main() {
     svg.addEventListener("mousedown", mousedownEvent);
     svg.addEventListener("touchstart", mousedownEvent);
 
-    async function mousedownEvent() {
-      switch (event.button) {
-        case 0: //左ボタン
-          lastDownXY = [event.clientX, event.clientY];
-          isDragging = true;
-          break;
-        case 1: //ホイールボタン
-          break;
-        case 2: //右ボタン
-          break;
-        default:
-          break;
+    async function mousedownEvent(event) {
+      // switch (event.button) {
+      //   case 0: //左ボタン
+      //     lastDownXY = [event.clientX, event.clientY];
+      //     isDragging = true;
+      //     break;
+      //   case 1: //ホイールボタン
+      //     break;
+      //   case 2: //右ボタン
+      //     break;
+      //   default:
+      //     break;
+      // }
+      if (event.type === "mousedown") {
+        switch (event.button) {
+          case 0: //左ボタン
+            lastDownXY = [event.clientX, event.clientY];
+            isDragging = true;
+            break;
+          case 1: //ホイールボタン
+            break;
+          case 2: //右ボタン
+            break;
+          default:
+            break;
+        }
+      } else if (event.type === "touchstart") {
+        event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+        lastDownXY = [event.touches[0].clientX, event.touches[0].clientY];
+        isDragging = true;
       }
     }
 
@@ -182,22 +200,30 @@ async function main() {
     svg.addEventListener("mousemove", mousemoveEvent);
     svg.addEventListener("touchmove", mousemoveEvent);
 
-    async function mousemoveEvent() {
+    async function mousemoveEvent(event) {
       if (isDragging) {
-        let foo = lastPara.scale;
-        let bar = [
-          lastPara.translate[0] + event.clientX - lastDownXY[0],
-          lastPara.translate[1] + event.clientY - lastDownXY[1]
-        ];
-        let baz = {
+        let foo = null;
+        if (event.type === "mousemove") {
+          foo = [
+            lastPara.translate[0] + event.clientX - lastDownXY[0],
+            lastPara.translate[1] + event.clientY - lastDownXY[1]
+          ];
+        } else if (event.type === "touchmove") {
+          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+          foo = [
+            lastPara.translate[0] + event.touches[0].clientX - lastDownXY[0],
+            lastPara.translate[1] + event.touches[0].clientY - lastDownXY[1]
+          ];
+        }
+        let bar = {
           width: lastPara.width,
           height: lastPara.height,
           range: lastPara.range,
-          scale: foo,
-          translate: bar
+          scale: lastPara.scale,
+          translate: foo
         };
         await removeElement(eleSvg);
-        await appendSvg(eleSvg, baz, lastGeo);
+        await appendSvg(eleSvg, bar, lastGeo);
       }
     }
 
@@ -224,15 +250,24 @@ async function main() {
     svg.addEventListener("mouseup", mouseupEvent);
     svg.addEventListener("touchend", mouseupEvent);
 
-    async function mouseupEvent() {
+    async function mouseupEvent(event) {
       //ビューポート外でmouseupしてもイベントは発生しない
       //ドラッグしたままビューポート外に出た等
       if (isDragging) {
         //mouseup時のtranslateを保存
-        let foo = [
-          lastPara.translate[0] + event.clientX - lastDownXY[0],
-          lastPara.translate[1] + event.clientY - lastDownXY[1]
-        ];
+        let foo = null;
+        if (event.type === "mouseup") {
+          foo = [
+            lastPara.translate[0] + event.clientX - lastDownXY[0],
+            lastPara.translate[1] + event.clientY - lastDownXY[1]
+          ];
+        } else if (event.type === "touchend") {
+          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+          foo = [
+            lastPara.translate[0] + event.touches[0].clientX - lastDownXY[0],
+            lastPara.translate[1] + event.touches[0].clientY - lastDownXY[1]
+          ];
+        }
         lastPara = {
           width: lastPara.width,
           height: lastPara.height,
