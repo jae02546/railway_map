@@ -145,7 +145,7 @@ async function main() {
 
     //開始
     svg.addEventListener("mousedown", mousedownEvent);
-    svg.addEventListener("touchstart", mousedownEvent);
+    // svg.addEventListener("touchstart", mousedownEvent);
 
     async function mousedownEvent() {
       switch (event.button) {
@@ -180,7 +180,7 @@ async function main() {
 
     //ドラッグ
     svg.addEventListener("mousemove", mousemoveEvent);
-    svg.addEventListener("touchmove", mousemoveEvent);
+    // svg.addEventListener("touchmove", mousemoveEvent);
 
     async function mousemoveEvent() {
       if (isDragging) {
@@ -222,7 +222,7 @@ async function main() {
 
     //ドラッグ終了
     svg.addEventListener("mouseup", mouseupEvent);
-    svg.addEventListener("touchend", mouseupEvent);
+    // svg.addEventListener("touchend", mouseupEvent);
 
     async function mouseupEvent() {
       //ビューポート外でmouseupしてもイベントは発生しない
