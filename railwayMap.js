@@ -279,6 +279,7 @@ async function main() {
           //     Math.round(event.touches[0].clientY) -
           //     lastDownXY[1]
           // ];
+          foo = [123, 456];
           alert("touchend " + foo);
         }
         lastPara = {
