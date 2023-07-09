@@ -176,9 +176,12 @@ async function main() {
         // alert("mousedown " + lastDownXY + " " + isDragging)
       } else if (event.type === "touchstart") {
         event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-        lastDownXY = [event.touches[0].clientX, event.touches[0].clientY];
+        lastDownXY = [
+          Math.round(event.touches[0].clientX),
+          Math.round(event.touches[0].clientY)
+        ];
         isDragging = true;
-        alert("touchstart " + lastDownXY + " " + isDragging)
+        // alert("touchstart " + lastDownXY + " " + isDragging);
       }
     }
 
@@ -259,18 +262,22 @@ async function main() {
         //mouseup時のtranslateを保存
         let foo = null;
         if (event.type === "mouseup") {
-          // alert("mouseup")
           foo = [
             lastPara.translate[0] + event.clientX - lastDownXY[0],
             lastPara.translate[1] + event.clientY - lastDownXY[1]
           ];
+          // alert("mouseup " + foo);
         } else if (event.type === "touchend") {
-          alert("touchend");
           event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           foo = [
-            lastPara.translate[0] + event.touches[0].clientX - lastDownXY[0],
-            lastPara.translate[1] + event.touches[0].clientY - lastDownXY[1]
+            lastPara.translate[0] +
+              Math.round(event.touches[0].clientX) -
+              lastDownXY[0],
+            lastPara.translate[1] +
+              Math.round(event.touches[0].clientY) -
+              lastDownXY[1]
           ];
+          alert("touchend " + foo);
         }
         lastPara = {
           width: lastPara.width,
