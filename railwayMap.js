@@ -271,8 +271,14 @@ async function main() {
           // alert("mouseup " + foo);
         } else if (event.type === "touchend") {
           event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-          alert("touchend " + lastPara.translate + " " + lastDownXY);
-          alert("touchend " + event.changedTouches[0]);
+          // alert("touchend " + lastPara.translate + " " + lastDownXY);
+          alert("touchend " + event.changedTouches);
+          alert(
+            "touchend " +
+              event.changedTouches[0].clientX +
+              " " +
+              event.changedTouches[0].clientY
+          );
           foo = [
             lastPara.translate[0] +
               event.changedTouches[0].clientX -
