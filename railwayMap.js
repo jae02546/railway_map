@@ -271,15 +271,10 @@ async function main() {
           // alert("mouseup " + foo);
         } else if (event.type === "touchend") {
           event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-          // foo = [
-          //   lastPara.translate[0] +
-          //     Math.round(event.touches[0].clientX) -
-          //     lastDownXY[0],
-          //   lastPara.translate[1] +
-          //     Math.round(event.touches[0].clientY) -
-          //     lastDownXY[1]
-          // ];
-          foo = [123, 456];
+          foo = [
+            lastPara.translate[0] + event.touches[0].clientX - lastDownXY[0],
+            lastPara.translate[1] + event.touches[0].clientY - lastDownXY[1]
+          ];
           alert("touchend " + foo);
         }
         lastPara = {
