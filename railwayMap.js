@@ -219,11 +219,11 @@ async function main() {
         } else if (event.type === "touchmove") {
           let barX = Math.round(event.touches[0].clientX);
           let barY = Math.round(event.touches[0].clientY);
-          // if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
-          if (
-            Math.abs(lastTouchXY[0] - barX) >= 10 ||
-            Math.abs(lastTouchXY[1] - barY) >= 10
-          ) {
+          if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
+            // if (
+            //   Math.abs(lastTouchXY[0] - barX) >= 10 ||
+            //   Math.abs(lastTouchXY[1] - barY) >= 10
+            // ) {
             let svg = d3
               .select("body")
               .append("svg")
@@ -237,7 +237,15 @@ async function main() {
               .attr("font-family", "sans-serif")
               .attr("font-size", "20px")
               .attr("fill", "black")
-              .text(barX + ", " + barY);
+              .text(
+                lastTouchXY[0] +
+                  ", " +
+                  barX +
+                  ", " +
+                  lastTouchXY[1] +
+                  ", " +
+                  barY
+              );
             // alert(
             //   "touchmove3 " +
             //     lastTouchXY[0] +
