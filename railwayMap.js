@@ -220,12 +220,22 @@ async function main() {
           let barX = Math.round(event.touches[0].clientX);
           let barY = Math.round(event.touches[0].clientY);
           if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
-              lastTouchXY = [barX, barY];
-              // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-              foo = [
-                lastPara.translate[0] + lastTouchXY[0] - lastDownXY[0],
-                lastPara.translate[1] + lastTouchXY[1] - lastDownXY[1]
-              ];
+            alert(
+              "touchmove3 " +
+                lastTouchXY[0] +
+                "!=" +
+                barX +
+                "||" +
+                lastTouchXY[1] +
+                "!=" +
+                barY
+            );
+            lastTouchXY = [barX, barY];
+            // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+            foo = [
+              lastPara.translate[0] + lastTouchXY[0] - lastDownXY[0],
+              lastPara.translate[1] + lastTouchXY[1] - lastDownXY[1]
+            ];
           }
         }
         if (foo != null) {
