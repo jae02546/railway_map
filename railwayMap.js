@@ -221,8 +221,8 @@ async function main() {
           let barY = Math.round(event.touches[0].clientY);
           // if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
           if (
-            Math.abs(lastTouchXY[0] - barX) >= 10 &&
-            Math.abs(lastTouchXY[1] - barY) >= 10
+            Math.abs(lastTouchXY[0] - barX) >= 100 &&
+            Math.abs(lastTouchXY[1] - barY) >= 100
           ) {
             // alert(
             //   "touchmove3 " +
