@@ -240,10 +240,10 @@ async function main() {
             //   lastPara.translate[0] + lastTouchXY[0] - lastDownXY[0],
             //   lastPara.translate[1] + lastTouchXY[1] - lastDownXY[1]
             // ];
-            foo = [
-              lastPara.translate[0] + barX - lastDownXY[0],
-              lastPara.translate[1] + barY - lastDownXY[1]
-            ];
+            // foo = [
+            //   lastPara.translate[0] + barX - lastDownXY[0],
+            //   lastPara.translate[1] + barY - lastDownXY[1]
+            // ];
           }
         }
         if (foo != null) {
