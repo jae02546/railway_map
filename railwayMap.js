@@ -229,7 +229,6 @@ async function main() {
               .append("svg")
               .attr("width", 500)
               .attr("height", 500);
-
             // textエレメントを作成してテキストを表示
             svg
               .append("text")
@@ -238,7 +237,8 @@ async function main() {
               .attr("font-family", "sans-serif")
               .attr("font-size", "20px")
               .attr("fill", "black")
-              .text("Hello D3.js!"); // alert(
+              .text(barX + ", " + barY);
+            // alert(
             //   "touchmove3 " +
             //     lastTouchXY[0] +
             //     "!=" +
