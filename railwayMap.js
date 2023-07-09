@@ -256,7 +256,7 @@ async function main() {
             //     "!=" +
             //     barY
             // );
-            // lastTouchXY = [barX, barY];
+            lastTouchXY = [barX, barY];
             // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
             // foo = [
             //   lastPara.translate[0] + lastTouchXY[0] - lastDownXY[0],
