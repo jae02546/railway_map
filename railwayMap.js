@@ -207,30 +207,30 @@ async function main() {
 
     async function mousemoveEvent(event) {
       if (isDragging) {
-        let foo = null;
-        if (event.type === "mousemove") {
-          foo = [
-            lastPara.translate[0] + event.clientX - lastDownXY[0],
-            lastPara.translate[1] + event.clientY - lastDownXY[1]
-          ];
-          // alert("mousemove " + foo);
-        } else if (event.type === "touchmove") {
-          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-          foo = [
-            lastPara.translate[0] + event.touches[0].clientX - lastDownXY[0],
-            lastPara.translate[1] + event.touches[0].clientY - lastDownXY[1]
-          ];
-          // alert("touchmove " + foo);
-        }
-        let bar = {
-          width: lastPara.width,
-          height: lastPara.height,
-          range: lastPara.range,
-          scale: lastPara.scale,
-          translate: foo
-        };
-        await removeElement(eleSvg);
-        await appendSvg(eleSvg, bar, lastGeo);
+        // let foo = null;
+        // if (event.type === "mousemove") {
+        //   foo = [
+        //     lastPara.translate[0] + event.clientX - lastDownXY[0],
+        //     lastPara.translate[1] + event.clientY - lastDownXY[1]
+        //   ];
+        //   // alert("mousemove " + foo);
+        // } else if (event.type === "touchmove") {
+        //   event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+        //   foo = [
+        //     lastPara.translate[0] + event.touches[0].clientX - lastDownXY[0],
+        //     lastPara.translate[1] + event.touches[0].clientY - lastDownXY[1]
+        //   ];
+        //   // alert("touchmove " + foo);
+        // }
+        // let bar = {
+        //   width: lastPara.width,
+        //   height: lastPara.height,
+        //   range: lastPara.range,
+        //   scale: lastPara.scale,
+        //   translate: foo
+        // };
+        // await removeElement(eleSvg);
+        // await appendSvg(eleSvg, bar, lastGeo);
       }
     }
 
