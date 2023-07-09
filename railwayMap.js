@@ -140,8 +140,9 @@ async function main() {
 
   //マウスドラッグイベント（移動）
   {
-    let lastDownXY = null; //マウスダウンxy座標
     let isDragging = false; //true:ドラッグ中
+    let lastDownXY = null; //マウスダウンxy座標
+    let lastTouchXY = null; //タッチイベントxy座標
 
     //開始
     svg.addEventListener("mousedown", mousedownEvent);
@@ -180,6 +181,7 @@ async function main() {
           Math.round(event.touches[0].clientX),
           Math.round(event.touches[0].clientY)
         ];
+        lastTouchXY = lastDownXY;
         isDragging = true;
         // alert("touchstart " + lastDownXY + " " + isDragging);
       }
@@ -215,22 +217,29 @@ async function main() {
           ];
           // alert("mousemove " + foo);
         } else if (event.type === "touchmove") {
-          // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-          foo = [
-            lastPara.translate[0] + event.touches[0].clientX - lastDownXY[0],
-            lastPara.translate[1] + event.touches[0].clientY - lastDownXY[1]
-          ];
-          // alert("touchmove " + foo);
+          let barX = Math.round(event.touches[0].clientX);
+          let barY = Math.round(event.touches[0].clientY);
+          if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
+            lastTouchXY = [barX, barY];
+            // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+            foo = [
+              lastPara.translate[0] + lastTouchXY[0] - lastDownXY[0],
+              lastPara.translate[1] + lastTouchXY[1] - lastDownXY[1]
+            ];
+            // alert("touchmove " + foo);
+          }
         }
-        let bar = {
-          width: lastPara.width,
-          height: lastPara.height,
-          range: lastPara.range,
-          scale: lastPara.scale,
-          translate: foo
-        };
-        await removeElement(eleSvg);
-        await appendSvg(eleSvg, bar, lastGeo);
+        if (foo != null) {
+          let bar = {
+            width: lastPara.width,
+            height: lastPara.height,
+            range: lastPara.range,
+            scale: lastPara.scale,
+            translate: foo
+          };
+          await removeElement(eleSvg);
+          await appendSvg(eleSvg, bar, lastGeo);
+        }
       }
     }
 
