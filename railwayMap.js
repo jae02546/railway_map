@@ -238,7 +238,7 @@ async function main() {
           };
           await removeElement(eleSvg);
           await appendSvg(eleSvg, bar, lastGeo);
-          // alert("touchmove2 " + foo);
+          alert("touchmove2 " + foo);
         }
       }
     }
