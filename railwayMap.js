@@ -213,12 +213,14 @@ async function main() {
             lastPara.translate[0] + event.clientX - lastDownXY[0],
             lastPara.translate[1] + event.clientY - lastDownXY[1]
           ];
+          // alert("mousemove " + foo);
         } else if (event.type === "touchmove") {
           event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           foo = [
             lastPara.translate[0] + event.touches[0].clientX - lastDownXY[0],
             lastPara.translate[1] + event.touches[0].clientY - lastDownXY[1]
           ];
+          alert("touchmove " + foo);
         }
         let bar = {
           width: lastPara.width,
