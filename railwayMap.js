@@ -181,7 +181,7 @@ async function main() {
           Math.round(event.touches[0].clientX),
           Math.round(event.touches[0].clientY)
         ];
-        lastTouchXY = lastDownXY;
+        lastTouchXY = [lastDownXY[0], lastDownXY[1]];
         isDragging = true;
         // alert("touchstart " + lastDownXY + " " + isDragging);
       }
