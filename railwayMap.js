@@ -225,7 +225,7 @@ async function main() {
         } else if (event.type === "touchmove") {
           console.log(
             funName,
-            "touchmove3",
+            "touchmove4",
             event.touches[0].clientX,
             event.touches[0].clientY
           );
@@ -241,17 +241,17 @@ async function main() {
             // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           }
         }
-        // if (foo != null) {
-        //   let bar = {
-        //     width: lastPara.width,
-        //     height: lastPara.height,
-        //     range: lastPara.range,
-        //     scale: lastPara.scale,
-        //     translate: foo
-        //   };
-        //   await removeElement(eleSvg);
-        //   await appendSvg(eleSvg, bar, lastGeo);
-        // }
+        if (foo != null) {
+          let bar = {
+            width: lastPara.width,
+            height: lastPara.height,
+            range: lastPara.range,
+            scale: lastPara.scale,
+            translate: foo
+          };
+          // await removeElement(eleSvg);
+          // await appendSvg(eleSvg, bar, lastGeo);
+        }
       }
     }
 
