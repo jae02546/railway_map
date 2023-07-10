@@ -225,7 +225,7 @@ async function main() {
         } else if (event.type === "touchmove") {
           console.log(
             funName,
-            "touchmove6",
+            "touchmove7",
             event.touches[0].clientX,
             event.touches[0].clientY
           );
