@@ -262,7 +262,7 @@ async function main() {
             lastPara.translate[0] + 10 - lastDownXY[0],
             lastPara.translate[1] + 10 - lastDownXY[1]
           ];
-          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+          // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           // }
         }
         if (foo != null) {
