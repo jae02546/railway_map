@@ -250,7 +250,7 @@ async function main() {
             translate: foo
           };
           await removeElement(eleSvg);
-          // await appendSvg(eleSvg, bar, lastGeo);
+          await appendSvg(eleSvg, bar, lastGeo);
         }
       }
     }
