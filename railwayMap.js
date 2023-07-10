@@ -224,30 +224,22 @@ async function main() {
             //   Math.abs(lastTouchXY[0] - barX) >= 10 ||
             //   Math.abs(lastTouchXY[1] - barY) >= 10
             // ) {
-            const tt =
-              lastTouchXY[0] +
-              ", " +
-              barX +
-              ", " +
-              lastTouchXY[1] +
-              ", " +
-              barY;
-            await testText(tt);
+            // const tt =
+            //   lastTouchXY[0] +
+            //   ", " +
+            //   barX +
+            //   ", " +
+            //   lastTouchXY[1] +
+            //   ", " +
+            //   barY;
+            // await testText(tt);
 
             lastTouchXY = [barX, barY];
             foo = [
               lastPara.translate[0] + barX - lastDownXY[0],
               lastPara.translate[1] + barY - lastDownXY[1]
             ];
-              // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-            // foo = [
-            //   lastPara.translate[0] + lastTouchXY[0] - lastDownXY[0],
-            //   lastPara.translate[1] + lastTouchXY[1] - lastDownXY[1]
-            // ];
-            // foo = [
-            //   lastPara.translate[0] + barX - lastDownXY[0],
-            //   lastPara.translate[1] + barY - lastDownXY[1]
-            // ];
+            event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           }
         }
         if (foo != null) {
