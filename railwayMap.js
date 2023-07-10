@@ -226,21 +226,21 @@ async function main() {
           // ) {
           const tt =
             lastTouchXY[0] + ", " + barX + ", " + lastTouchXY[1] + ", " + barY;
-          // await testText(tt);
-          let svg = d3
-            .select("body")
-            .append("svg")
-            .attr("width", 500)
-            .attr("height", 100);
-          // textエレメントを作成してテキストを表示
-          svg
-            .append("text")
-            .attr("x", 50)
-            .attr("y", 50)
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "20px")
-            .attr("fill", "black")
-            .text(tt);
+          await testText(tt);
+          // let svg = d3
+          //   .select("body")
+          //   .append("svg")
+          //   .attr("width", 500)
+          //   .attr("height", 100);
+          // // textエレメントを作成してテキストを表示
+          // svg
+          //   .append("text")
+          //   .attr("x", 50)
+          //   .attr("y", 50)
+          //   .attr("font-family", "sans-serif")
+          //   .attr("font-size", "20px")
+          //   .attr("fill", "black")
+          //   .text(tt);
 
           lastTouchXY = [barX, barY];
           // foo = [
