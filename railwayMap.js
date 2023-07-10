@@ -213,7 +213,7 @@ async function main() {
         if (event.type === "mousemove") {
           console.log(
             funName,
-            "touchmove",
+            "mousemove",
             event.clientX,
             event.clientY
           );
@@ -238,7 +238,7 @@ async function main() {
               lastPara.translate[0] + barX - lastDownXY[0],
               lastPara.translate[1] + barY - lastDownXY[1]
             ];
-            // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+            event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           }
         }
         if (foo != null) {
