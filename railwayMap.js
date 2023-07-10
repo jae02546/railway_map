@@ -238,7 +238,7 @@ async function main() {
               lastPara.translate[0] + barX - lastDownXY[0],
               lastPara.translate[1] + barY - lastDownXY[1]
             ];
-            // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+            event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           }
         }
         if (foo != null) {
@@ -249,8 +249,10 @@ async function main() {
             scale: lastPara.scale,
             translate: foo
           };
-          await removeElement(eleSvg);
-          await appendSvg(eleSvg, bar, lastGeo);
+          // await removeElement(eleSvg);
+          // await appendSvg(eleSvg, bar, lastGeo);
+          removeElement(eleSvg);
+          appendSvg(eleSvg, bar, lastGeo);
         }
       }
     }
