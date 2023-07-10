@@ -222,48 +222,49 @@ async function main() {
           let barX = Math.round(event.touches[0].clientX);
           let barY = Math.round(event.touches[0].clientY);
           if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
-          // if (
-          //   Math.abs(lastTouchXY[0] - barX) >= 10 ||
-          //   Math.abs(lastTouchXY[1] - barY) >= 10
-          // ) {
-          const tt =
-            lastTouchXY[0] +
-            ", " +
-            barX +
-            ", " +
-            lastTouchXY[1] +
-            ", " +
-            barY +
-            ", " +
-            lastDownXY[0] +
-            ", " +
-            lastDownXY[1];
-          let svg = d3
-            .select("body")
-            .append("svg")
-            .attr("width", 500)
-            .attr("height", 100);
-          // textエレメントを作成してテキストを表示
-          svg
-            .append("text")
-            .attr("x", 50)
-            .attr("y", 50)
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "20px")
-            .attr("fill", "black")
-            .text(tt);
+            // if (
+            //   Math.abs(lastTouchXY[0] - barX) >= 10 ||
+            //   Math.abs(lastTouchXY[1] - barY) >= 10
+            // ) {
+            const tt =
+              lastTouchXY[0] +
+              ", " +
+              barX +
+              ", " +
+              lastTouchXY[1] +
+              ", " +
+              barY +
+              ", " +
+              lastDownXY[0] +
+              ", " +
+              lastDownXY[1];
+            let svg = d3
+              .select("body")
+              .append("svg")
+              .attr("width", 500)
+              .attr("height", 100);
+            // textエレメントを作成してテキストを表示
+            svg
+              .append("text")
+              .attr("x", 50)
+              .attr("y", 50)
+              .attr("font-family", "sans-serif")
+              .attr("font-size", "20px")
+              .attr("fill", "black")
+              .text(tt);
 
-          lastTouchXY = [barX, barY];
-          // foo = [
-          //   lastPara.translate[0] + barX - lastDownXY[0],
-          //   lastPara.translate[1] + barY - lastDownXY[1]
-          // ];
-          // foo = [
-          //   lastPara.translate[0] + 10 - lastDownXY[0],
-          //   lastPara.translate[1] + 10 - lastDownXY[1]
-          // ];
-          // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-          // }
+            lastTouchXY = [barX, barY];
+            // foo = [
+            //   lastPara.translate[0] + barX - lastDownXY[0],
+            //   lastPara.translate[1] + barY - lastDownXY[1]
+            // ];
+            // foo = [
+            //   lastPara.translate[0] + 10 - lastDownXY[0],
+            //   lastPara.translate[1] + 10 - lastDownXY[1]
+            // ];
+            // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+            // }
+          }
         }
         if (foo != null) {
           let bar = {
@@ -277,22 +278,22 @@ async function main() {
           await appendSvg(eleSvg, bar, lastGeo);
           // alert("touchmove2 " + foo);
         }
+
+        // let svg = d3
+        //   .select("body")
+        //   .append("svg")
+        //   .attr("width", 500)
+        //   .attr("height", 100);
+        // // textエレメントを作成してテキストを表示
+        // svg
+        //   .append("text")
+        //   .attr("x", 50)
+        //   .attr("y", 50)
+        //   .attr("font-family", "sans-serif")
+        //   .attr("font-size", "20px")
+        //   .attr("fill", "black")
+        //   .text(isDragging);
       }
-      
-      // let svg = d3
-      //   .select("body")
-      //   .append("svg")
-      //   .attr("width", 500)
-      //   .attr("height", 100);
-      // // textエレメントを作成してテキストを表示
-      // svg
-      //   .append("text")
-      //   .attr("x", 50)
-      //   .attr("y", 50)
-      //   .attr("font-family", "sans-serif")
-      //   .attr("font-size", "20px")
-      //   .attr("fill", "black")
-      //   .text(isDragging);
     }
 
     // svg.addEventListener("mousemove", async function(event) {
