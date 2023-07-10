@@ -234,24 +234,24 @@ async function main() {
           let barY = Math.round(event.touches[0].clientY);
           if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
             lastTouchXY = [barX, barY];
-            // foo = [
-            //   lastPara.translate[0] + barX - lastDownXY[0],
-            //   lastPara.translate[1] + barY - lastDownXY[1]
-            // ];
+            foo = [
+              lastPara.translate[0] + barX - lastDownXY[0],
+              lastPara.translate[1] + barY - lastDownXY[1]
+            ];
             // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           }
         }
-        if (foo != null) {
-          let bar = {
-            width: lastPara.width,
-            height: lastPara.height,
-            range: lastPara.range,
-            scale: lastPara.scale,
-            translate: foo
-          };
-          await removeElement(eleSvg);
-          await appendSvg(eleSvg, bar, lastGeo);
-        }
+        // if (foo != null) {
+        //   let bar = {
+        //     width: lastPara.width,
+        //     height: lastPara.height,
+        //     range: lastPara.range,
+        //     scale: lastPara.scale,
+        //     translate: foo
+        //   };
+        //   await removeElement(eleSvg);
+        //   await appendSvg(eleSvg, bar, lastGeo);
+        // }
       }
     }
 
