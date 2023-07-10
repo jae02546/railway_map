@@ -219,6 +219,8 @@ async function main() {
           // await testText(tt);
           // alert("mousemove " + foo);
         } else if (event.type === "touchmove") {
+          console.log(funName, event.touches[0]);
+
           let barX = Math.round(event.touches[0].clientX);
           let barY = Math.round(event.touches[0].clientY);
           if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
