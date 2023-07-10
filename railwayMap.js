@@ -215,6 +215,8 @@ async function main() {
             lastPara.translate[0] + event.clientX - lastDownXY[0],
             lastPara.translate[1] + event.clientY - lastDownXY[1]
           ];
+          // const tt = event.clientX + " " + event.clientY;
+          // await testText(tt);
           // alert("mousemove " + foo);
         } else if (event.type === "touchmove") {
           let barX = Math.round(event.touches[0].clientX);
@@ -224,8 +226,8 @@ async function main() {
           //   Math.abs(lastTouchXY[0] - barX) >= 10 ||
           //   Math.abs(lastTouchXY[1] - barY) >= 10
           // ) {
-          const tt =
-            lastTouchXY[0] + ", " + barX + ", " + lastTouchXY[1] + ", " + barY;
+          const tt = barX + " " + barY;
+          // lastTouchXY[0] + ", " + barX + ", " + lastTouchXY[1] + ", " + barY;
           await testText(tt);
           // let svg = d3
           //   .select("body")
