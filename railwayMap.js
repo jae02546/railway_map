@@ -219,28 +219,28 @@ async function main() {
         } else if (event.type === "touchmove") {
           let barX = Math.round(event.touches[0].clientX);
           let barY = Math.round(event.touches[0].clientY);
-          if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
-            // if (
-            //   Math.abs(lastTouchXY[0] - barX) >= 10 ||
-            //   Math.abs(lastTouchXY[1] - barY) >= 10
-            // ) {
-            // const tt =
-            //   lastTouchXY[0] +
-            //   ", " +
-            //   barX +
-            //   ", " +
-            //   lastTouchXY[1] +
-            //   ", " +
-            //   barY;
-            // await testText(tt);
+          // if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
+          // if (
+          //   Math.abs(lastTouchXY[0] - barX) >= 10 ||
+          //   Math.abs(lastTouchXY[1] - barY) >= 10
+          // ) {
+          // const tt =
+          //   lastTouchXY[0] +
+          //   ", " +
+          //   barX +
+          //   ", " +
+          //   lastTouchXY[1] +
+          //   ", " +
+          //   barY;
+          // await testText(tt);
 
-            lastTouchXY = [barX, barY];
-            foo = [
-              lastPara.translate[0] + barX - lastDownXY[0],
-              lastPara.translate[1] + barY - lastDownXY[1]
-            ];
-            event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-          }
+          // lastTouchXY = [barX, barY];
+          foo = [
+            lastPara.translate[0] + barX - lastDownXY[0],
+            lastPara.translate[1] + barY - lastDownXY[1]
+          ];
+          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+          // }
         }
         if (foo != null) {
           let bar = {
