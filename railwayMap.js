@@ -234,12 +234,12 @@ async function main() {
             barY;
           await testText(tt);
 
-          // lastTouchXY = [barX, barY];
+          lastTouchXY = [barX, barY];
           // foo = [
           //   lastPara.translate[0] + barX - lastDownXY[0],
           //   lastPara.translate[1] + barY - lastDownXY[1]
           // ];
-          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+          // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           // }
         }
         if (foo != null) {
