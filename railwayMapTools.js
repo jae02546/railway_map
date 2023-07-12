@@ -317,7 +317,7 @@ async function appendSvg2(eleName, lastPara, geo) {
     .append("svg")
     .attr("width", lastPara.width)
     .attr("height", lastPara.height);
-  let g = svg.append("g");
+  // let g = svg.append("g");
   // //プロジェクションを作成（初期化）
   // let projection = d3.geoMercator();
   // // プロジェクションにスケールとtranslateを設定
