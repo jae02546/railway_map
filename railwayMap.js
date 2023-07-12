@@ -225,7 +225,7 @@ async function main() {
         } else if (event.type === "touchmove") {
           console.log(
             funName,
-            "touchmove7",
+            "touchmove8",
             event.touches[0].clientX,
             event.touches[0].clientY
           );
@@ -252,7 +252,7 @@ async function main() {
           // await removeElement(eleSvg);
           // await appendSvg(eleSvg, bar, lastGeo);
           removeElement(eleSvg);
-          appendSvg(eleSvg, bar, lastGeo);
+          // appendSvg(eleSvg, bar, lastGeo);
         }
       }
     }
