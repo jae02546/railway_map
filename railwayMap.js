@@ -144,10 +144,6 @@ async function main() {
     let lastDownXY = null; //マウスダウンxy座標
     let lastTouchXY = null; //タッチイベントxy座標
 
-    //開始
-    svg.addEventListener("mousedown", mousedownEvent);
-    svg.addEventListener("touchstart", mousedownEvent);
-
     svg.addEventListener("pointerdown", pointerdownEvent);
     svg.addEventListener("pointermove", pointerdownEvent);
     svg.addEventListener("pointerup", pointerdownEvent);
@@ -155,12 +151,17 @@ async function main() {
     async function pointerdownEvent(event) {
       console.log(
         "pointerdownEvent ",
+        event.type,
         event.pointerId,
         event.pointerType,
         event.clientX,
         event.clientY
       );
     }
+
+    //開始
+    svg.addEventListener("mousedown", mousedownEvent);
+    svg.addEventListener("touchstart", mousedownEvent);
 
     async function mousedownEvent(event) {
       // switch (event.button) {
@@ -220,7 +221,6 @@ async function main() {
     //ドラッグ
     svg.addEventListener("mousemove", mousemoveEvent);
     svg.addEventListener("touchmove", mousemoveEvent);
-    svg.addEventListener("touchmove", mousemoveEvent);
 
     async function mousemoveEvent(event) {
       if (isDragging) {
@@ -262,7 +262,7 @@ async function main() {
           // await removeElement(eleSvg);
           // await appendSvg(eleSvg, bar, lastGeo);
           removeElement(eleSvg);
-          appendSvg2(eleSvg, bar, lastGeo);
+          appendSvg(eleSvg, bar, lastGeo);
         }
       }
     }
