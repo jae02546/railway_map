@@ -211,28 +211,24 @@ async function main() {
       if (isDragging) {
         let foo = null;
         if (event.type === "mousemove") {
-          console.log(
-            funName,
-            "mousemove",
-            event.clientX,
-            event.clientY
-          );
+          console.log(funName, "mousemove", event.clientX, event.clientY);
 
           foo = [
             lastPara.translate[0] + event.clientX - lastDownXY[0],
             lastPara.translate[1] + event.clientY - lastDownXY[1]
           ];
         } else if (event.type === "touchmove") {
-          console.log(
-            funName,
-            "touchmove 15",
-            event.touches[0].clientX,
-            event.touches[0].clientY
-          );
-
           let barX = Math.round(event.touches[0].clientX);
           let barY = Math.round(event.touches[0].clientY);
           if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
+
+            console.log(
+              funName,
+              "touchmove 16",
+              event.touches[0].clientX,
+              event.touches[0].clientY
+            );
+
             lastTouchXY = [barX, barY];
             foo = [
               lastPara.translate[0] + barX - lastDownXY[0],
