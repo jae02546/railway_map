@@ -303,6 +303,65 @@ async function appendSvg(eleName, lastPara, geo) {
   }
 }
 
+//svg追加2
+async function appendSvg2(eleName, lastPara, geo) {
+  //引数
+  //eleName:追加するエレメント
+  //lastPara:
+  //geo:geoデータ
+  let funName = appendSvg2.name;
+  // console.log(funName, "", lastPara);
+  //D3.jsのsvg作成
+  let svg = d3
+    .select("#" + eleName)
+    .append("svg")
+    .attr("width", lastPara.width)
+    .attr("height", lastPara.height);
+  let g = svg.append("g");
+  // //プロジェクションを作成（初期化）
+  // let projection = d3.geoMercator();
+  // // プロジェクションにスケールとtranslateを設定
+  // projection.scale(lastPara.scale).translate(lastPara.translate);
+  // // GeoPath ジェネレータを設定
+  // let pathGenerator = d3.geoPath().projection(projection);
+
+  // // SVG上に描画
+  // g
+  //   .selectAll(".path-all")
+  //   .data(geo.All)
+  //   .enter()
+  //   .append("path")
+  //   .attr("class", "path-all")
+  //   .attr("d", pathGenerator)
+  //   // .style("stroke", "black")
+  //   .style("stroke", "gray")
+  //   .style("fill", "none");
+
+  // if (geo.Company != null) {
+  //   g
+  //     .selectAll(".path-company")
+  //     .data(geo.Company)
+  //     .enter()
+  //     .append("path")
+  //     .attr("class", "path-company")
+  //     .attr("d", pathGenerator)
+  //     .style("stroke", "blue")
+  //     .style("fill", "none");
+  // }
+
+  // if (geo.Line != null) {
+  //   g
+  //     .selectAll(".path-line")
+  //     .data(geo.Line)
+  //     .enter()
+  //     .append("path")
+  //     .attr("class", "path-line")
+  //     .attr("d", pathGenerator)
+  //     .style("stroke", "red")
+  //     .style("fill", "none");
+  // }
+}
+
 //rangeをradianからDegreeに変換
 async function rangeFromRadianToDegree(range) {
   //[[xmin, ymin],[xmax, ymax]]
@@ -317,4 +376,21 @@ async function rangeFromRadianToDegree(range) {
 async function radianToDegree(radian) {
   let degree = radian * (180 / Math.PI);
   return degree;
+}
+
+async function testText(tt) {
+  let svg = d3
+    .select("body")
+    .append("svg")
+    .attr("width", 500)
+    .attr("height", 100);
+  // textエレメントを作成してテキストを表示
+  svg
+    .append("text")
+    .attr("x", 50)
+    .attr("y", 50)
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "20px")
+    .attr("fill", "black")
+    .text(tt);
 }
