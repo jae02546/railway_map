@@ -145,7 +145,7 @@ async function main() {
     let lastTouchXY = null; //タッチイベントxy座標
 
     svg.addEventListener("pointerdown", pointerdownEvent);
-    svg.addEventListener("pointermove", pointerdownEvent);
+    // svg.addEventListener("pointermove", pointerdownEvent);
     svg.addEventListener("pointerup", pointerupEvent);
 
     async function pointerdownEvent(event) {
