@@ -221,10 +221,9 @@ async function main() {
           let barX = Math.round(event.touches[0].clientX);
           let barY = Math.round(event.touches[0].clientY);
           if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
-
             console.log(
               funName,
-              "touchmove 16",
+              "touchmove 17",
               event.touches[0].clientX,
               event.touches[0].clientY
             );
@@ -243,7 +242,8 @@ async function main() {
             height: lastPara.height,
             range: lastPara.range,
             scale: lastPara.scale,
-            translate: foo
+            // translate: foo
+            translate: [0, 0]
           };
           // await removeElement(eleSvg);
           // await appendSvg(eleSvg, bar, lastGeo);
