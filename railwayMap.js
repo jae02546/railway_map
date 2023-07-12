@@ -252,7 +252,7 @@ async function main() {
           // await removeElement(eleSvg);
           // await appendSvg(eleSvg, bar, lastGeo);
           removeElement(eleSvg);
-          // appendSvg(eleSvg, bar, lastGeo);
+          appendSvg2(eleSvg, bar, lastGeo);
         }
       }
     }
