@@ -312,12 +312,12 @@ async function appendSvg2(eleName, lastPara, geo) {
   let funName = appendSvg2.name;
   // console.log(funName, "", lastPara);
   //D3.jsのsvg作成
-  // let svg = d3
-  //   .select("#" + eleName)
-  //   .append("svg")
-  //   .attr("width", lastPara.width)
-  //   .attr("height", lastPara.height);
-  // let g = svg.append("g");
+  let svg = d3
+    .select("#" + eleName)
+    .append("svg")
+    .attr("width", lastPara.width)
+    .attr("height", lastPara.height);
+  let g = svg.append("g");
   // //プロジェクションを作成（初期化）
   // let projection = d3.geoMercator();
   // // プロジェクションにスケールとtranslateを設定
