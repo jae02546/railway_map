@@ -147,10 +147,19 @@ async function main() {
     //開始
     svg.addEventListener("mousedown", mousedownEvent);
     svg.addEventListener("touchstart", mousedownEvent);
+
     svg.addEventListener("pointerdown", pointerdownEvent);
+    svg.addEventListener("pointermove", pointerdownEvent);
+    svg.addEventListener("pointerup", pointerdownEvent);
 
     async function pointerdownEvent(event) {
-      console.log("pointerdownEvent ", event.pointerId, event.pointerType);
+      console.log(
+        "pointerdownEvent ",
+        event.pointerId,
+        event.pointerType,
+        event.clientX,
+        event.clientY
+      );
     }
 
     async function mousedownEvent(event) {
