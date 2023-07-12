@@ -152,11 +152,15 @@ async function main() {
       console.log(
         "pointerdownEvent ",
         event.type,
+        event.button,
         event.pointerId,
         event.pointerType,
         event.clientX,
         event.clientY
       );
+      if(event.button == 0){
+        
+      }
     }
 
     //開始
