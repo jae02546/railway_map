@@ -235,14 +235,72 @@ async function getLastPara(eleName, geo) {
   };
 }
 
-//エレメント削除
-async function removeElement(eleName) {
-  //指定id配下のエレメントを全て削除する
-  let element = document.getElementById(eleName);
-  while (element.firstChild) {
-    element.removeChild(element.firstChild);
-  }
+//ビューポート全体に表示するlastParaを取得する
+async function getLastPara2(ds, geo) {
+  //引数
+  //eleName:追加するエレメント
+  //geo:ビューポート全体に表示するgeoデータ
+  //戻り値 width,height,range,scale,translate
+  let funName = getLastPara2.name;
+  //ビューポートに表示する地理的範囲（最小値最大値）取得
+  let geoRange = await getGeoRange(geo);
+  // console.log(funName, "getGeoRange", geoRange);
+  //D3.jsのsvg作成
+  // let ds = document.getElementById(eleName);
+  let w = ds.offsetWidth;
+  let h = ds.offsetHeight;
+  // console.log(funName, "width:", w, "height:", h);
+  // let svg = d3
+  //   .select("#" + eleName)
+  //   .append("svg")
+  //   .attr("width", w)
+  //   .attr("height", h);
+  // let g = svg.append("g");
+  //プロジェクションを作成（初期化）
+  let projection = d3.geoMercator();
+  projection
+    .scale(1) // 一旦、スケールを1に設定
+    .translate([0, 0]); // 一旦、translateを0に設定
+  //地理的範囲をビューポートのピクセル範囲に変換
+  //[[xmin, ymin], [xmax, ymax]]
+  let r0 = projection(geoRange[0]); //最小値
+  let r1 = projection(geoRange[1]); //最大値
+  // console.log(funName, "r0 r1:", r0, r1);
+  //paddingを設定 (5%)
+  let padding = 0.05 * Math.min(w, h);
+  // let padding = 0;
+  //スケールとセンターを計算xz
+  let s =
+    1 /
+    Math.max(
+      (r1[0] - r0[0]) / (w - padding * 2),
+      (r0[1] - r1[1]) / (h - padding * 2)
+    );
+  let t = [(w - s * (r0[0] + r1[0])) / 2, (h - s * (r0[1] + r1[1])) / 2];
+  //戻り値
+  //width:ビューポート幅
+  //height:ビューポート高さ
+  //range:表示データ経度x緯度y最小値最大値(rad)
+  //      [[xmin, ymin], [xmax, ymax]]
+  //scale:表示幅(px)/表示角度(rad)
+  //translate:[x,y](px)ビューポート左下から見た経度0緯度0位置
+  return {
+    width: w,
+    height: h,
+    range: [r0, r1],
+    scale: s,
+    translate: t
+  };
 }
+
+// //エレメント削除
+// async function removeElement(eleName) {
+//   //指定id配下のエレメントを全て削除する
+//   let element = document.getElementById(eleName);
+//   while (element.firstChild) {
+//     element.removeChild(element.firstChild);
+//   }
+// }
 
 //エレメント削除
 async function removeElement2(element) {

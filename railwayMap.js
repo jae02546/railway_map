@@ -24,7 +24,8 @@ async function main() {
   //全事業者全路線表示（初期表示）
   {
     lastGeo = await getGeometry(geoJson, null, null, null);
-    lastPara = await getLastPara(eleSvg, lastGeo.All);
+    // lastPara = await getLastPara(eleSvg, lastGeo.All);
+    lastPara = await getLastPara2(svg, lastGeo.All);
     // await removeElement(eleSvg);
     await removeElement2(svg);
     await appendSvg(eleSvg, lastPara, lastGeo);
@@ -67,7 +68,8 @@ async function main() {
       {
         //選択された事業者をビューポート全体に表示するlastPara取得
         let bar = await getGeometry(geoJson, null, soCompany.text, null);
-        lastPara = await getLastPara(eleSvg, bar.Company);
+        // lastPara = await getLastPara(eleSvg, bar.Company);
+        lastPara = await getLastPara2(svg, bar.Company);
 
         //これはうまくいく（これだとビューポート外も全路線が表示される）
         // await removeElement(eleSvg);
