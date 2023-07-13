@@ -150,19 +150,22 @@ async function main() {
 
     async function mousedownEvent(event) {
       if (event.type === "mousedown") {
-        switch (event.button) {
-          case 0: //左ボタン
-            lastDownXY = [event.clientX, event.clientY];
-            isDragging = true;
-            break;
-          case 1: //ホイールボタン
-            break;
-          case 2: //右ボタン
-            break;
-          default:
-            break;
+        if(event.button == 0){
+          lastDownXY = [event.clientX, event.clientY];
+          isDragging = true;
         }
-        // alert("mousedown " + lastDownXY + " " + isDragging)
+        // switch (event.button) {
+        //   case 0: //左ボタン
+        //     lastDownXY = [event.clientX, event.clientY];
+        //     isDragging = true;
+        //     break;
+        //   case 1: //ホイールボタン
+        //     break;
+        //   case 2: //右ボタン
+        //     break;
+        //   default:
+        //     break;
+        // }
       } else if (event.type === "touchstart") {
         event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
         lastDownXY = [
@@ -171,11 +174,10 @@ async function main() {
         ];
         lastTouchXY = [lastDownXY[0], lastDownXY[1]];
         isDragging = true;
-        // alert("touchstart " + lastDownXY + " " + isDragging);
       }
     }
 
-    //ドラッグ
+    //移動
     svg.addEventListener("mousemove", mousemoveEvent);
     svg.addEventListener("touchmove", mousemoveEvent);
 
@@ -190,6 +192,7 @@ async function main() {
             lastPara.translate[1] + event.clientY - lastDownXY[1]
           ];
         } else if (event.type === "touchmove") {
+          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           let barX = Math.round(event.touches[0].clientX);
           let barY = Math.round(event.touches[0].clientY);
           if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
@@ -205,7 +208,6 @@ async function main() {
               lastPara.translate[0] + barX - lastDownXY[0],
               lastPara.translate[1] + barY - lastDownXY[1]
             ];
-            event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           }
         }
         if (foo != null) {
@@ -216,15 +218,13 @@ async function main() {
             scale: lastPara.scale,
             translate: foo
           };
-          // await removeElement(eleSvg);
-          // await appendSvg(eleSvg, bar, lastGeo);
           removeElement(eleSvg);
           appendSvg(eleSvg, bar, lastGeo);
         }
       }
     }
 
-    //ドラッグ終了
+    //終了
     svg.addEventListener("mouseup", mouseupEvent);
     svg.addEventListener("touchend", mouseupEvent);
 
@@ -244,10 +244,10 @@ async function main() {
           event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
           foo = [
             lastPara.translate[0] +
-              event.changedTouches[0].clientX -
+              Math.round(event.changedTouches[0].clientX) -
               lastDownXY[0],
             lastPara.translate[1] +
-              event.changedTouches[0].clientY -
+              Math.round(event.changedTouches[0].clientY) -
               lastDownXY[1]
           ];
           // alert("touchend " + foo);
