@@ -149,6 +149,7 @@ async function main() {
     svg.addEventListener("pointerup", pointerupEvent);
 
     async function pointerdownEvent(event) {
+      event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
       console.log(
         "pointerdownEvent",
         event.type,
@@ -158,7 +159,6 @@ async function main() {
         event.clientX,
         event.clientY
       );
-      event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
       if (event.button == 0) {
         lastDownXY = [Math.round(event.clientX), Math.round(event.clientY)];
         lastTouchXY = [lastDownXY[0], lastDownXY[1]];
@@ -167,6 +167,7 @@ async function main() {
     }
 
     async function pointerupEvent(event) {
+      event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
       console.log(
         "pointerupEvent",
         event.type,
@@ -176,7 +177,6 @@ async function main() {
         event.clientX,
         event.clientY
       );
-      event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
       if (isDragging) {
         //mouseup時のtranslateを保存
         let foo = [
