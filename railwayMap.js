@@ -165,7 +165,7 @@ async function main() {
 
         console.log(
           funName,
-          "touchstart 19",
+          "touchstart 20",
           event.touches[0].clientX,
           event.touches[0].clientY
         );
@@ -217,7 +217,7 @@ async function main() {
 
             console.log(
               funName,
-              "touchmove 19",
+              "touchmove 20",
               event.touches[0].clientX,
               event.touches[0].clientY
             );
@@ -240,6 +240,14 @@ async function main() {
     //終了
     svg.addEventListener("mouseup", mouseupEvent);
     svg.addEventListener("touchend", mouseupEvent);
+    svg.addEventListener("touchcancel", function(e) {
+      console.log(
+        funName,
+        "touchcancel 20",
+        event.changedTouches[0].clientX,
+        event.changedTouches[0].clientY
+      );
+    });
 
     async function mouseupEvent(event) {
       //ビューポート外でmouseupしてもイベントは発生しない
@@ -265,7 +273,7 @@ async function main() {
           ];
           console.log(
             funName,
-            "touchend 19",
+            "touchend 20",
             event.changedTouches[0].clientX,
             event.changedTouches[0].clientY
           );
