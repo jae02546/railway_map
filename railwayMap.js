@@ -212,8 +212,8 @@ async function main() {
               scale: lastPara.scale,
               translate: foo
             };
-            // removeElement(eleSvg);
-          //   appendSvg2(eleSvg, bar, lastGeo);
+            removeElement(eleSvg);
+            appendSvg2(eleSvg, bar, lastGeo);
 
             // console.log(
             //   funName,
