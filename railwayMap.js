@@ -165,7 +165,7 @@ async function main() {
 
         console.log(
           funName,
-          "touchstart 20",
+          "touchstart 21",
           event.touches[0].clientX,
           event.touches[0].clientY
         );
@@ -217,7 +217,7 @@ async function main() {
 
             console.log(
               funName,
-              "touchmove 20",
+              "touchmove 21",
               event.touches[0].clientX,
               event.touches[0].clientY
             );
@@ -243,9 +243,9 @@ async function main() {
     svg.addEventListener("touchcancel", function(e) {
       console.log(
         funName,
-        "touchcancel 20",
-        event.changedTouches[0].clientX,
-        event.changedTouches[0].clientY
+        "touchcancel 21"
+        // e.changedTouches[0].clientX,
+        // e.changedTouches[0].clientY
       );
     });
 
@@ -273,7 +273,7 @@ async function main() {
           ];
           console.log(
             funName,
-            "touchend 20",
+            "touchend 21",
             event.changedTouches[0].clientX,
             event.changedTouches[0].clientY
           );
