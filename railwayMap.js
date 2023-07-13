@@ -196,32 +196,32 @@ async function main() {
           removeElement(eleSvg);
           appendSvg(eleSvg, bar, lastGeo);
         } else if (event.type === "touchmove") {
-          // event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-          // let barX = Math.round(event.touches[0].clientX);
-          // let barY = Math.round(event.touches[0].clientY);
-          // if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
-          //   lastTouchXY = [barX, barY];
-          //   foo = [
-          //     lastPara.translate[0] + barX - lastDownXY[0],
-          //     lastPara.translate[1] + barY - lastDownXY[1]
-          //   ];
-          //   let bar = {
-          //     width: lastPara.width,
-          //     height: lastPara.height,
-          //     range: lastPara.range,
-          //     scale: lastPara.scale,
-          //     translate: foo
-          //   };
-          //   removeElement(eleSvg);
+          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+          let barX = Math.round(event.touches[0].clientX);
+          let barY = Math.round(event.touches[0].clientY);
+          if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
+            lastTouchXY = [barX, barY];
+            foo = [
+              lastPara.translate[0] + barX - lastDownXY[0],
+              lastPara.translate[1] + barY - lastDownXY[1]
+            ];
+            let bar = {
+              width: lastPara.width,
+              height: lastPara.height,
+              range: lastPara.range,
+              scale: lastPara.scale,
+              translate: foo
+            };
+            removeElement(eleSvg);
           //   appendSvg2(eleSvg, bar, lastGeo);
 
-          //   console.log(
-          //     funName,
-          //     "touchmove 21",
-          //     event.touches[0].clientX,
-          //     event.touches[0].clientY
-          //   );
-          // }
+            console.log(
+              funName,
+              "touchmove 22",
+              event.touches[0].clientX,
+              event.touches[0].clientY
+            );
+          }
         }
         // if (foo != null) {
         //   let bar = {
