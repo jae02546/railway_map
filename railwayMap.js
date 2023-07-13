@@ -212,15 +212,15 @@ async function main() {
               scale: lastPara.scale,
               translate: foo
             };
-            removeElement(eleSvg);
+            // removeElement(eleSvg);
           //   appendSvg2(eleSvg, bar, lastGeo);
 
-            console.log(
-              funName,
-              "touchmove 22",
-              event.touches[0].clientX,
-              event.touches[0].clientY
-            );
+            // console.log(
+            //   funName,
+            //   "touchmove 22",
+            //   event.touches[0].clientX,
+            //   event.touches[0].clientY
+            // );
           }
         }
         // if (foo != null) {
