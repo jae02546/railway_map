@@ -144,45 +144,114 @@ async function main() {
     let lastDownXY = null; //マウスダウンxy座標
     let lastTouchXY = null; //タッチイベントxy座標
 
-    svg.addEventListener("pointerdown", pointerdownEvent);
-    // svg.addEventListener("pointermove", pointerdownEvent);
-    svg.addEventListener("pointerup", pointerupEvent);
+    //開始
+    svg.addEventListener("mousedown", mousedownEvent);
+    svg.addEventListener("touchstart", mousedownEvent);
 
-    async function pointerdownEvent(event) {
-      event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-      console.log(
-        "pointerdownEvent",
-        event.type,
-        event.button,
-        event.pointerId,
-        event.pointerType,
-        event.clientX,
-        event.clientY
-      );
-      if (event.button == 0) {
-        lastDownXY = [Math.round(event.clientX), Math.round(event.clientY)];
+    async function mousedownEvent(event) {
+      if (event.type === "mousedown") {
+        switch (event.button) {
+          case 0: //左ボタン
+            lastDownXY = [event.clientX, event.clientY];
+            isDragging = true;
+            break;
+          case 1: //ホイールボタン
+            break;
+          case 2: //右ボタン
+            break;
+          default:
+            break;
+        }
+        // alert("mousedown " + lastDownXY + " " + isDragging)
+      } else if (event.type === "touchstart") {
+        event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+        lastDownXY = [
+          Math.round(event.touches[0].clientX),
+          Math.round(event.touches[0].clientY)
+        ];
         lastTouchXY = [lastDownXY[0], lastDownXY[1]];
         isDragging = true;
+        // alert("touchstart " + lastDownXY + " " + isDragging);
       }
     }
 
-    async function pointerupEvent(event) {
-      event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-      console.log(
-        "pointerupEvent",
-        event.type,
-        event.button,
-        event.pointerId,
-        event.pointerType,
-        event.clientX,
-        event.clientY
-      );
+    //ドラッグ
+    svg.addEventListener("mousemove", mousemoveEvent);
+    svg.addEventListener("touchmove", mousemoveEvent);
+
+    async function mousemoveEvent(event) {
+      if (isDragging) {
+        let foo = null;
+        if (event.type === "mousemove") {
+          console.log(funName, "mousemove", event.clientX, event.clientY);
+
+          foo = [
+            lastPara.translate[0] + event.clientX - lastDownXY[0],
+            lastPara.translate[1] + event.clientY - lastDownXY[1]
+          ];
+        } else if (event.type === "touchmove") {
+          let barX = Math.round(event.touches[0].clientX);
+          let barY = Math.round(event.touches[0].clientY);
+          if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
+            console.log(
+              funName,
+              "touchmove 17",
+              event.touches[0].clientX,
+              event.touches[0].clientY
+            );
+
+            lastTouchXY = [barX, barY];
+            foo = [
+              lastPara.translate[0] + barX - lastDownXY[0],
+              lastPara.translate[1] + barY - lastDownXY[1]
+            ];
+            event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+          }
+        }
+        if (foo != null) {
+          let bar = {
+            width: lastPara.width,
+            height: lastPara.height,
+            range: lastPara.range,
+            scale: lastPara.scale,
+            translate: foo
+          };
+          // await removeElement(eleSvg);
+          // await appendSvg(eleSvg, bar, lastGeo);
+          removeElement(eleSvg);
+          appendSvg(eleSvg, bar, lastGeo);
+        }
+      }
+    }
+
+    //ドラッグ終了
+    svg.addEventListener("mouseup", mouseupEvent);
+    svg.addEventListener("touchend", mouseupEvent);
+
+    async function mouseupEvent(event) {
+      //ビューポート外でmouseupしてもイベントは発生しない
+      //ドラッグしたままビューポート外に出た等
       if (isDragging) {
         //mouseup時のtranslateを保存
-        let foo = [
-          lastPara.translate[0] + Math.round(event.clientX) - lastDownXY[0],
-          lastPara.translate[1] + Math.round(event.clientY) - lastDownXY[1]
-        ];
+        let foo = null;
+        if (event.type === "mouseup") {
+          foo = [
+            lastPara.translate[0] + event.clientX - lastDownXY[0],
+            lastPara.translate[1] + event.clientY - lastDownXY[1]
+          ];
+          // alert("mouseup " + foo);
+        } else if (event.type === "touchend") {
+          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+          foo = [
+            lastPara.translate[0] +
+              event.changedTouches[0].clientX -
+              lastDownXY[0],
+            lastPara.translate[1] +
+              event.changedTouches[0].clientY -
+              lastDownXY[1]
+          ];
+          // alert("touchend " + foo);
+        }
         lastPara = {
           width: lastPara.width,
           height: lastPara.height,
@@ -200,131 +269,5 @@ async function main() {
       }
       isDragging = false;
     }
-
-    // //開始
-    // svg.addEventListener("mousedown", mousedownEvent);
-    // svg.addEventListener("touchstart", mousedownEvent);
-
-    // async function mousedownEvent(event) {
-    //   if (event.type === "mousedown") {
-    //     switch (event.button) {
-    //       case 0: //左ボタン
-    //         lastDownXY = [event.clientX, event.clientY];
-    //         isDragging = true;
-    //         break;
-    //       case 1: //ホイールボタン
-    //         break;
-    //       case 2: //右ボタン
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //     // alert("mousedown " + lastDownXY + " " + isDragging)
-    //   } else if (event.type === "touchstart") {
-    //     event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-    //     lastDownXY = [
-    //       Math.round(event.touches[0].clientX),
-    //       Math.round(event.touches[0].clientY)
-    //     ];
-    //     lastTouchXY = [lastDownXY[0], lastDownXY[1]];
-    //     isDragging = true;
-    //     // alert("touchstart " + lastDownXY + " " + isDragging);
-    //   }
-    // }
-
-    // //ドラッグ
-    // svg.addEventListener("mousemove", mousemoveEvent);
-    // svg.addEventListener("touchmove", mousemoveEvent);
-
-    // async function mousemoveEvent(event) {
-    //   if (isDragging) {
-    //     let foo = null;
-    //     if (event.type === "mousemove") {
-    //       console.log(funName, "mousemove", event.clientX, event.clientY);
-
-    //       foo = [
-    //         lastPara.translate[0] + event.clientX - lastDownXY[0],
-    //         lastPara.translate[1] + event.clientY - lastDownXY[1]
-    //       ];
-    //     } else if (event.type === "touchmove") {
-    //       let barX = Math.round(event.touches[0].clientX);
-    //       let barY = Math.round(event.touches[0].clientY);
-    //       if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
-    //         console.log(
-    //           funName,
-    //           "touchmove 17",
-    //           event.touches[0].clientX,
-    //           event.touches[0].clientY
-    //         );
-
-    //         lastTouchXY = [barX, barY];
-    //         foo = [
-    //           lastPara.translate[0] + barX - lastDownXY[0],
-    //           lastPara.translate[1] + barY - lastDownXY[1]
-    //         ];
-    //         event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-    //       }
-    //     }
-    //     if (foo != null) {
-    //       let bar = {
-    //         width: lastPara.width,
-    //         height: lastPara.height,
-    //         range: lastPara.range,
-    //         scale: lastPara.scale,
-    //         translate: foo
-    //       };
-    //       // await removeElement(eleSvg);
-    //       // await appendSvg(eleSvg, bar, lastGeo);
-    //       removeElement(eleSvg);
-    //       appendSvg(eleSvg, bar, lastGeo);
-    //     }
-    //   }
-    // }
-
-    // //ドラッグ終了
-    // svg.addEventListener("mouseup", mouseupEvent);
-    // svg.addEventListener("touchend", mouseupEvent);
-
-    // async function mouseupEvent(event) {
-    //   //ビューポート外でmouseupしてもイベントは発生しない
-    //   //ドラッグしたままビューポート外に出た等
-    //   if (isDragging) {
-    //     //mouseup時のtranslateを保存
-    //     let foo = null;
-    //     if (event.type === "mouseup") {
-    //       foo = [
-    //         lastPara.translate[0] + event.clientX - lastDownXY[0],
-    //         lastPara.translate[1] + event.clientY - lastDownXY[1]
-    //       ];
-    //       // alert("mouseup " + foo);
-    //     } else if (event.type === "touchend") {
-    //       event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-    //       foo = [
-    //         lastPara.translate[0] +
-    //           event.changedTouches[0].clientX -
-    //           lastDownXY[0],
-    //         lastPara.translate[1] +
-    //           event.changedTouches[0].clientY -
-    //           lastDownXY[1]
-    //       ];
-    //       // alert("touchend " + foo);
-    //     }
-    //     lastPara = {
-    //       width: lastPara.width,
-    //       height: lastPara.height,
-    //       range: lastPara.range,
-    //       scale: lastPara.scale,
-    //       translate: foo
-    //     };
-
-    //     let bar = await GetViewportRange(lastPara);
-    //     let cText = soCompany != null ? soCompany.text : null;
-    //     let lText = soLine != null ? soLine.text : null;
-    //     lastGeo = await getGeometry(geoJson, bar, cText, lText);
-    //     await removeElement(eleSvg);
-    //     await appendSvg(eleSvg, lastPara, lastGeo);
-    //   }
-    //   isDragging = false;
-    // }
   }
 }
