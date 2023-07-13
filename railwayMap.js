@@ -154,18 +154,6 @@ async function main() {
           lastDownXY = [event.clientX, event.clientY];
           isDragging = true;
         }
-        // switch (event.button) {
-        //   case 0: //左ボタン
-        //     lastDownXY = [event.clientX, event.clientY];
-        //     isDragging = true;
-        //     break;
-        //   case 1: //ホイールボタン
-        //     break;
-        //   case 2: //右ボタン
-        //     break;
-        //   default:
-        //     break;
-        // }
       } else if (event.type === "touchstart") {
         event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
         lastDownXY = [
@@ -174,6 +162,13 @@ async function main() {
         ];
         lastTouchXY = [lastDownXY[0], lastDownXY[1]];
         isDragging = true;
+
+        console.log(
+          funName,
+          "touchstart 19",
+          event.touches[0].clientX,
+          event.touches[0].clientY
+        );
       }
     }
 
@@ -222,7 +217,7 @@ async function main() {
 
             console.log(
               funName,
-              "touchmove 18",
+              "touchmove 19",
               event.touches[0].clientX,
               event.touches[0].clientY
             );
@@ -268,7 +263,12 @@ async function main() {
               Math.round(event.changedTouches[0].clientY) -
               lastDownXY[1]
           ];
-          // alert("touchend " + foo);
+          console.log(
+            funName,
+            "touchend 19",
+            event.changedTouches[0].clientX,
+            event.changedTouches[0].clientY
+          );
         }
         lastPara = {
           width: lastPara.width,
