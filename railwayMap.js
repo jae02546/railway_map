@@ -25,7 +25,8 @@ async function main() {
   {
     lastGeo = await getGeometry(geoJson, null, null, null);
     lastPara = await getLastPara(eleSvg, lastGeo.All);
-    await removeElement(eleSvg);
+    // await removeElement(eleSvg);
+    await removeElement2(svg);
     await appendSvg(eleSvg, lastPara, lastGeo);
   }
 
@@ -75,7 +76,8 @@ async function main() {
         let baz = await GetViewportRange(lastPara);
         // let que = await getGeometry2(geoJson, baz, soCompany.text, null);
         lastGeo = await getGeometry(geoJson, baz, soCompany.text, null);
-        await removeElement(eleSvg);
+        // await removeElement(eleSvg);
+        await removeElement2(svg);
         await appendSvg(eleSvg, lastPara, lastGeo);
       }
     }
@@ -87,7 +89,8 @@ async function main() {
       soLine = this.options[this.selectedIndex];
       let baz = await GetViewportRange(lastPara);
       lastGeo = await getGeometry(geoJson, baz, soCompany.text, soLine.text);
-      await removeElement(eleSvg);
+      // await removeElement(eleSvg);
+      await removeElement2(svg);
       await appendSvg(eleSvg, lastPara, lastGeo);
     });
   }
@@ -133,7 +136,8 @@ async function main() {
       let cText = soCompany != null ? soCompany.text : null;
       let lText = soLine != null ? soLine.text : null;
       lastGeo = await getGeometry(geoJson, foo, cText, lText);
-      await removeElement(eleSvg);
+      // await removeElement(eleSvg);
+      await removeElement2(svg);
       await appendSvg(eleSvg, lastPara, lastGeo);
     });
   }
@@ -193,7 +197,8 @@ async function main() {
             scale: lastPara.scale,
             translate: foo
           };
-          removeElement(eleSvg);
+          // removeElement(eleSvg);
+          await removeElement2(svg);
           appendSvg(eleSvg, bar, lastGeo);
         } else if (event.type === "touchmove") {
           event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
@@ -212,7 +217,8 @@ async function main() {
               scale: lastPara.scale,
               translate: foo
             };
-            removeElement(eleSvg);
+            // removeElement(eleSvg);
+            await removeElement2(svg);
             appendSvg2(eleSvg, bar, lastGeo);
 
             // console.log(
@@ -290,7 +296,8 @@ async function main() {
         let cText = soCompany != null ? soCompany.text : null;
         let lText = soLine != null ? soLine.text : null;
         lastGeo = await getGeometry(geoJson, bar, cText, lText);
-        await removeElement(eleSvg);
+        // await removeElement(eleSvg);
+        await removeElement2(svg);
         await appendSvg(eleSvg, lastPara, lastGeo);
       }
       isDragging = false;
