@@ -244,6 +244,14 @@ async function removeElement(eleName) {
   }
 }
 
+//エレメント削除
+async function removeElement2(element) {
+  //指定エレメント配下のエレメントを全て削除する
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+}
+
 //svg追加
 async function appendSvg(eleName, lastPara, geo) {
   //引数
