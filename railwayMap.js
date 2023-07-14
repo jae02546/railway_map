@@ -5,10 +5,10 @@ async function main() {
   const eleLine = "listBoxLine";
   const eleSvg = "divSvg";
   //事業者リストボックス、路線リストボックス、svg
-  const lbCompany = document.getElementById(eleCompany);
-  const lbLine = document.getElementById(eleLine);
-  const svg = document.getElementById(eleSvg);
-  let d3svg = d3.select(eleSvg);
+  let lbCompany = document.getElementById(eleCompany);
+  let lbLine = document.getElementById(eleLine);
+  let svg = document.getElementById(eleSvg);
+  let d3svg = d3.select("#" + eleSvg);
   //選択中事業者オプション、選択中路線オプション
   let soCompany = null;
   let soLine = null;
