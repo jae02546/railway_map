@@ -44,43 +44,35 @@ async function main() {
     });
   }
 
-  // // touchstart イベントに対するリスナーを設定
-  // {
-  //   d3svg.on("touchstart", function(event) {
-  //     let touch = d3.touches(svg); // これによりタッチされた座標の配列を取得します。
-
-  //     // 1本指でのタッチのみを対象とする
-  //     if (touch.length === 1) {
-  //       var x = touch[0][0]; // x 座標
-  //       var y = touch[0][1]; // y 座標
-
-  //       console.log("タッチした座標: (" + x + ", " + y + ")");
-  //     }
-  //   });
-  // }
   {
-    d3.select("#" + eleSvg).on("touchstart", function(event) {
+    d3.select("#" + eleSvg).on("mousedown", function(event) {
       // タッチされた座標を取得する
       var x = event.clientX;
       var y = event.clientY;
+      console.log("mousedownタッチした座標", x, y);
+    });
+    d3.select("#" + eleSvg).on("touchstart", function(event) {
+      // タッチされた座標を取得する
+      var x = event.touches[0].clientX;
+      var y = event.touches[0].clientY;
       console.log("touchstartタッチした座標", x, y);
     });
     d3.select("#" + eleSvg).on("touchmove", function(event) {
       // タッチされた座標を取得する
-      var x = event.clientX;
-      var y = event.clientY;
+      var x = event.touches[0].clientX;
+      var y = event.touches[0].clientY;
       console.log("touchmoveタッチした座標", x, y);
     });
     d3.select("#" + eleSvg).on("touchend", function(event) {
       // タッチされた座標を取得する
-      var x = event.clientX;
-      var y = event.clientY;
+      var x = event.touches[0].clientX;
+      var y = event.touches[0].clientY;
       console.log("touchendタッチした座標", x, y);
     });
     d3.select("#" + eleSvg).on("touchcancel", function(event) {
       // タッチされた座標を取得する
-      var x = event.clientX;
-      var y = event.clientY;
+      var x = event.touches[0].clientX;
+      var y = event.touches[0].clientY;
       console.log("touchcancelタッチした座標", x, y);
     });
   }
