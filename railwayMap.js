@@ -49,31 +49,49 @@ async function main() {
       // タッチされた座標を取得する
       var x = event.clientX;
       var y = event.clientY;
-      console.log("mousedownタッチした座標", x, y);
+      console.log("mousedown", "タッチした座標", x, y);
+    });
+    d3.select("#" + eleSvg).on("mousemove", function(event) {
+      // タッチされた座標を取得する
+      var x = event.clientX;
+      var y = event.clientY;
+      console.log("mousemove", "タッチした座標", x, y);
+    });
+    d3.select("#" + eleSvg).on("mouseup", function(event) {
+      // タッチされた座標を取得する
+      var x = event.clientX;
+      var y = event.clientY;
+      console.log("mouseup", "タッチした座標", x, y);
+    });
+    d3.select("#" + eleSvg).on("wheel", function(event) {
+      // タッチされた座標を取得する
+      var x = event.clientX;
+      var y = event.clientY;
+      console.log("wheel", "タッチした座標", x, y);
     });
     d3.select("#" + eleSvg).on("touchstart", function(event) {
       // タッチされた座標を取得する
       var x = event.touches[0].clientX;
       var y = event.touches[0].clientY;
-      console.log("touchstartタッチした座標", x, y);
+      console.log("touchstart", "タッチした座標", x, y);
     });
     d3.select("#" + eleSvg).on("touchmove", function(event) {
       // タッチされた座標を取得する
       var x = event.touches[0].clientX;
       var y = event.touches[0].clientY;
-      console.log("touchmoveタッチした座標", x, y);
+      console.log("touchmove", "タッチした座標", x, y);
     });
     d3.select("#" + eleSvg).on("touchend", function(event) {
       // タッチされた座標を取得する
-      var x = event.touches[0].clientX;
-      var y = event.touches[0].clientY;
-      console.log("touchendタッチした座標", x, y);
+      var x = event.changedTouches[0].clientX;
+      var y = event.changedTouches[0].clientY;
+      console.log("touchend", "タッチした座標", x, y);
     });
     d3.select("#" + eleSvg).on("touchcancel", function(event) {
       // タッチされた座標を取得する
       var x = event.touches[0].clientX;
       var y = event.touches[0].clientY;
-      console.log("touchcancelタッチした座標", x, y);
+      console.log("touchcancel", "タッチした座標", x, y);
     });
   }
 
