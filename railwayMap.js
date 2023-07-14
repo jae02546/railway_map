@@ -63,7 +63,25 @@ async function main() {
       // タッチされた座標を取得する
       var x = event.clientX;
       var y = event.clientY;
-      console.log("タッチした座標: (" + x + ", " + y + ")");
+      console.log("touchstartタッチした座標", x, y);
+    });
+    d3.select("#" + eleSvg).on("touchmove", function(event) {
+      // タッチされた座標を取得する
+      var x = event.clientX;
+      var y = event.clientY;
+      console.log("touchmoveタッチした座標", x, y);
+    });
+    d3.select("#" + eleSvg).on("touchend", function(event) {
+      // タッチされた座標を取得する
+      var x = event.clientX;
+      var y = event.clientY;
+      console.log("touchendタッチした座標", x, y);
+    });
+    d3.select("#" + eleSvg).on("touchcancel", function(event) {
+      // タッチされた座標を取得する
+      var x = event.clientX;
+      var y = event.clientY;
+      console.log("touchcancelタッチした座標", x, y);
     });
   }
 
