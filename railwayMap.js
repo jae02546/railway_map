@@ -223,7 +223,7 @@ async function main() {
 
     //移動
     svg.addEventListener("mousemove", mousemoveEvent);
-    svg.addEventListener("touchmove", mousemoveEvent);
+    // svg.addEventListener("touchmove", mousemoveEvent);
 
     async function mousemoveEvent(event) {
       if (isDragging) {
