@@ -43,19 +43,27 @@ async function main() {
       lbCompany.add(bar);
     });
   }
-  // touchstart イベントに対するリスナーを設定
+
+  // // touchstart イベントに対するリスナーを設定
+  // {
+  //   d3svg.on("touchstart", function(event) {
+  //     let touch = d3.touches(svg); // これによりタッチされた座標の配列を取得します。
+
+  //     // 1本指でのタッチのみを対象とする
+  //     if (touch.length === 1) {
+  //       var x = touch[0][0]; // x 座標
+  //       var y = touch[0][1]; // y 座標
+
+  //       console.log("タッチした座標: (" + x + ", " + y + ")");
+  //     }
+  //   });
+  // }
   {
-    d3svg.on("touchstart", function(event) {
-      let touch = d3.touches(svg); // これによりタッチされた座標の配列を取得します。
-
-
-      // 1本指でのタッチのみを対象とする
-      if (touch.length === 1) {
-        var x = touch[0][0]; // x 座標
-        var y = touch[0][1]; // y 座標
-
-        console.log("タッチした座標: (" + x + ", " + y + ")");
-      }
+    d3.select("#" + eleSvg).on("touchstart", function(d, i) {
+      // タッチされた座標を取得する
+      var x = d3.event.clientX;
+      var y = d3.event.clientY;
+      console.log("タッチした座標: (" + x + ", " + y + ")");
     });
   }
 
