@@ -177,66 +177,66 @@ async function getGeoRange(geo) {
   return [[xmin, ymin], [xmax, ymax]];
 }
 
-//ビューポート全体に表示するlastParaを取得する
-async function getLastPara(eleName, geo) {
-  //引数
-  //eleName:追加するエレメント
-  //geo:ビューポート全体に表示するgeoデータ
-  //戻り値 width,height,range,scale,translate
-  let funName = getLastPara.name;
-  //ビューポートに表示する地理的範囲（最小値最大値）取得
-  let geoRange = await getGeoRange(geo);
-  // console.log(funName, "getGeoRange", geoRange);
-  //D3.jsのsvg作成
-  let ds = document.getElementById(eleName);
-  let w = ds.offsetWidth;
-  let h = ds.offsetHeight;
-  // console.log(funName, "width:", w, "height:", h);
-  let svg = d3
-    .select("#" + eleName)
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);
-  let g = svg.append("g");
-  //プロジェクションを作成（初期化）
-  let projection = d3.geoMercator();
-  projection
-    .scale(1) // 一旦、スケールを1に設定
-    .translate([0, 0]); // 一旦、translateを0に設定
-  //地理的範囲をビューポートのピクセル範囲に変換
-  //[[xmin, ymin], [xmax, ymax]]
-  let r0 = projection(geoRange[0]); //最小値
-  let r1 = projection(geoRange[1]); //最大値
-  // console.log(funName, "r0 r1:", r0, r1);
-  //paddingを設定 (5%)
-  let padding = 0.05 * Math.min(w, h);
-  // let padding = 0;
-  //スケールとセンターを計算xz
-  let s =
-    1 /
-    Math.max(
-      (r1[0] - r0[0]) / (w - padding * 2),
-      (r0[1] - r1[1]) / (h - padding * 2)
-    );
-  let t = [(w - s * (r0[0] + r1[0])) / 2, (h - s * (r0[1] + r1[1])) / 2];
-  //戻り値
-  //width:ビューポート幅
-  //height:ビューポート高さ
-  //range:表示データ経度x緯度y最小値最大値(rad)
-  //      [[xmin, ymin], [xmax, ymax]]
-  //scale:表示幅(px)/表示角度(rad)
-  //translate:[x,y](px)ビューポート左下から見た経度0緯度0位置
-  return {
-    width: w,
-    height: h,
-    range: [r0, r1],
-    scale: s,
-    translate: t
-  };
-}
+// //ビューポート全体に表示するlastParaを取得する
+// async function getLastPara(eleName, geo) {
+//   //引数
+//   //eleName:追加するエレメント
+//   //geo:ビューポート全体に表示するgeoデータ
+//   //戻り値 width,height,range,scale,translate
+//   let funName = getLastPara.name;
+//   //ビューポートに表示する地理的範囲（最小値最大値）取得
+//   let geoRange = await getGeoRange(geo);
+//   // console.log(funName, "getGeoRange", geoRange);
+//   //D3.jsのsvg作成
+//   let ds = document.getElementById(eleName);
+//   let w = ds.offsetWidth;
+//   let h = ds.offsetHeight;
+//   // console.log(funName, "width:", w, "height:", h);
+//   let svg = d3
+//     .select("#" + eleName)
+//     .append("svg")
+//     .attr("width", w)
+//     .attr("height", h);
+//   let g = svg.append("g");
+//   //プロジェクションを作成（初期化）
+//   let projection = d3.geoMercator();
+//   projection
+//     .scale(1) // 一旦、スケールを1に設定
+//     .translate([0, 0]); // 一旦、translateを0に設定
+//   //地理的範囲をビューポートのピクセル範囲に変換
+//   //[[xmin, ymin], [xmax, ymax]]
+//   let r0 = projection(geoRange[0]); //最小値
+//   let r1 = projection(geoRange[1]); //最大値
+//   // console.log(funName, "r0 r1:", r0, r1);
+//   //paddingを設定 (5%)
+//   let padding = 0.05 * Math.min(w, h);
+//   // let padding = 0;
+//   //スケールとセンターを計算xz
+//   let s =
+//     1 /
+//     Math.max(
+//       (r1[0] - r0[0]) / (w - padding * 2),
+//       (r0[1] - r1[1]) / (h - padding * 2)
+//     );
+//   let t = [(w - s * (r0[0] + r1[0])) / 2, (h - s * (r0[1] + r1[1])) / 2];
+//   //戻り値
+//   //width:ビューポート幅
+//   //height:ビューポート高さ
+//   //range:表示データ経度x緯度y最小値最大値(rad)
+//   //      [[xmin, ymin], [xmax, ymax]]
+//   //scale:表示幅(px)/表示角度(rad)
+//   //translate:[x,y](px)ビューポート左下から見た経度0緯度0位置
+//   return {
+//     width: w,
+//     height: h,
+//     range: [r0, r1],
+//     scale: s,
+//     translate: t
+//   };
+// }
 
 //ビューポート全体に表示するlastParaを取得する
-async function getLastPara2(ds, geo) {
+async function getLastPara2(svg, geo) {
   //引数
   //eleName:追加するエレメント
   //geo:ビューポート全体に表示するgeoデータ
@@ -247,8 +247,8 @@ async function getLastPara2(ds, geo) {
   // console.log(funName, "getGeoRange", geoRange);
   //D3.jsのsvg作成
   // let ds = document.getElementById(eleName);
-  let w = ds.offsetWidth;
-  let h = ds.offsetHeight;
+  let w = svg.offsetWidth;
+  let h = svg.offsetHeight;
   // console.log(funName, "width:", w, "height:", h);
   // let svg = d3
   //   .select("#" + eleName)
@@ -369,21 +369,24 @@ async function appendSvg(eleName, lastPara, geo) {
   }
 }
 
-//svg追加2
+//svg追加
 async function appendSvg2(eleName, lastPara, geo) {
-  //引数
-  //eleName:追加するエレメント
-  //lastPara:
-  //geo:geoデータ
-  let funName = appendSvg2.name;
-  // console.log(funName, "", lastPara);
-  //D3.jsのsvg作成
-  // let svg = d3
-  //   .select("#" + eleName)
-  //   .append("svg")
-  //   .attr("width", lastPara.width)
-  //   .attr("height", lastPara.height);
+  // //引数
+  // //eleName:追加するエレメント
+  // //lastPara:
+  // //geo:geoデータ
+  // let funName = appendSvg2.name;
+  // // console.log(funName, "", lastPara);
+  // //D3.jsのsvg作成
+  // // let svg = d3
+  // //   .select("#" + eleName)
+  // //   .append("svg")
+  // //   .attr("width", lastPara.width)
+  // //   .attr("height", lastPara.height);
+  // // let g = svg.append("g");
+
   // let g = svg.append("g");
+
   // //プロジェクションを作成（初期化）
   // let projection = d3.geoMercator();
   // // プロジェクションにスケールとtranslateを設定
@@ -442,21 +445,4 @@ async function rangeFromRadianToDegree(range) {
 async function radianToDegree(radian) {
   let degree = radian * (180 / Math.PI);
   return degree;
-}
-
-async function testText(tt) {
-  let svg = d3
-    .select("body")
-    .append("svg")
-    .attr("width", 500)
-    .attr("height", 100);
-  // textエレメントを作成してテキストを表示
-  svg
-    .append("text")
-    .attr("x", 50)
-    .attr("y", 50)
-    .attr("font-family", "sans-serif")
-    .attr("font-size", "20px")
-    .attr("fill", "black")
-    .text(tt);
 }

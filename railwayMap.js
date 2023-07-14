@@ -8,6 +8,7 @@ async function main() {
   const lbCompany = document.getElementById(eleCompany);
   const lbLine = document.getElementById(eleLine);
   const svg = document.getElementById(eleSvg);
+  let d3svg = d3.select(eleSvg);
   //選択中事業者オプション、選択中路線オプション
   let soCompany = null;
   let soLine = null;
@@ -29,6 +30,7 @@ async function main() {
     // await removeElement(eleSvg);
     await removeElement2(svg);
     await appendSvg(eleSvg, lastPara, lastGeo);
+    // await appendSvg2(svg, lastPara, lastGeo);
   }
 
   //事業者リストボックス事業者名追加
@@ -39,6 +41,20 @@ async function main() {
       bar.text = element;
       bar.value = element;
       lbCompany.add(bar);
+    });
+  }
+  // touchstart イベントに対するリスナーを設定
+  {
+    d3svg.on("touchstart", function(event) {
+      let touch = d3.touches(this); // これによりタッチされた座標の配列を取得します。
+
+      // 1本指でのタッチのみを対象とする
+      if (touch.length === 1) {
+        var x = touch[0][0]; // x 座標
+        var y = touch[0][1]; // y 座標
+
+        console.log("タッチした座標: (" + x + ", " + y + ")");
+      }
     });
   }
 
