@@ -59,10 +59,10 @@ async function main() {
   //   });
   // }
   {
-    d3.select("#" + eleSvg).on("touchstart", function(d, i) {
+    d3.select("#" + eleSvg).on("touchstart", function(event) {
       // タッチされた座標を取得する
-      var x = d3.event.clientX;
-      var y = d3.event.clientY;
+      var x = event.clientX;
+      var y = event.clientY;
       console.log("タッチした座標: (" + x + ", " + y + ")");
     });
   }
