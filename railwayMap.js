@@ -132,8 +132,12 @@ async function main() {
         event.touches[0].clientY
       );
       event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-      var x = event.touches[0].clientX;
-      var y = event.touches[0].clientY;
+      lastDownXY = [
+        Math.round(event.touches[0].clientX),
+        Math.round(event.touches[0].clientY)
+      ];
+      lastTouchXY = [lastDownXY[0], lastDownXY[1]];
+      isDragging = true;
     });
 
     d3.select("#" + eleSvg).on("mousemove", async function(event) {
