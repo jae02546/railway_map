@@ -310,6 +310,15 @@ async function removeElement2(element) {
   }
 }
 
+// //エレメント削除
+// async function removeElement(eleName) {
+//   //指定id配下のエレメントを全て削除する
+//   let element = document.getElementById(eleName);
+//   while (element.firstChild) {
+//     element.removeChild(element.firstChild);
+//   }
+// }
+
 //svg追加
 async function appendSvg(eleName, lastPara, geo) {
   //引数
@@ -370,65 +379,63 @@ async function appendSvg(eleName, lastPara, geo) {
 }
 
 //svg追加
-async function appendSvg2(eleName, lastPara, geo) {
-  // //引数
-  // //eleName:追加するエレメント
-  // //lastPara:
-  // //geo:geoデータ
-  // let funName = appendSvg2.name;
-  // // console.log(funName, "", lastPara);
-  // //D3.jsのsvg作成
-  // // let svg = d3
-  // //   .select("#" + eleName)
-  // //   .append("svg")
-  // //   .attr("width", lastPara.width)
-  // //   .attr("height", lastPara.height);
-  // // let g = svg.append("g");
+async function appendSvg2(lastPara, geo) {
+  //引数
+  //eleName:追加するエレメント
+  //lastPara:
+  //geo:geoデータ
+  let funName = appendSvg.name;
+  // console.log(funName, "", lastPara);
+  //D3.jsのsvg作成
+  // let svg = d3
+  //   .select("#" + eleName)
+  //   .append("svg")
+  //   .attr("width", lastPara.width)
+  //   .attr("height", lastPara.height);
 
-  // let g = svg.append("g");
+  let g = d3.select("svg").append("g");
+  //プロジェクションを作成（初期化）
+  let projection = d3.geoMercator();
+  // プロジェクションにスケールとtranslateを設定
+  projection.scale(lastPara.scale).translate(lastPara.translate);
+  // GeoPath ジェネレータを設定
+  let pathGenerator = d3.geoPath().projection(projection);
 
-  // //プロジェクションを作成（初期化）
-  // let projection = d3.geoMercator();
-  // // プロジェクションにスケールとtranslateを設定
-  // projection.scale(lastPara.scale).translate(lastPara.translate);
-  // // GeoPath ジェネレータを設定
-  // let pathGenerator = d3.geoPath().projection(projection);
+  // SVG上に描画
+  g
+    .selectAll(".path-all")
+    .data(geo.All)
+    .enter()
+    .append("path")
+    .attr("class", "path-all")
+    .attr("d", pathGenerator)
+    // .style("stroke", "black")
+    .style("stroke", "gray")
+    .style("fill", "none");
 
-  // // SVG上に描画
-  // g
-  //   .selectAll(".path-all")
-  //   .data(geo.All)
-  //   .enter()
-  //   .append("path")
-  //   .attr("class", "path-all")
-  //   .attr("d", pathGenerator)
-  //   // .style("stroke", "black")
-  //   .style("stroke", "gray")
-  //   .style("fill", "none");
+  if (geo.Company != null) {
+    g
+      .selectAll(".path-company")
+      .data(geo.Company)
+      .enter()
+      .append("path")
+      .attr("class", "path-company")
+      .attr("d", pathGenerator)
+      .style("stroke", "blue")
+      .style("fill", "none");
+  }
 
-  // if (geo.Company != null) {
-  //   g
-  //     .selectAll(".path-company")
-  //     .data(geo.Company)
-  //     .enter()
-  //     .append("path")
-  //     .attr("class", "path-company")
-  //     .attr("d", pathGenerator)
-  //     .style("stroke", "blue")
-  //     .style("fill", "none");
-  // }
-
-  // if (geo.Line != null) {
-  //   g
-  //     .selectAll(".path-line")
-  //     .data(geo.Line)
-  //     .enter()
-  //     .append("path")
-  //     .attr("class", "path-line")
-  //     .attr("d", pathGenerator)
-  //     .style("stroke", "red")
-  //     .style("fill", "none");
-  // }
+  if (geo.Line != null) {
+    g
+      .selectAll(".path-line")
+      .data(geo.Line)
+      .enter()
+      .append("path")
+      .attr("class", "path-line")
+      .attr("d", pathGenerator)
+      .style("stroke", "red")
+      .style("fill", "none");
+  }
 }
 
 //rangeをradianからDegreeに変換
