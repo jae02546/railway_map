@@ -155,30 +155,30 @@ async function main() {
       }
     });
 
-    d3.select("#" + eleSvg).on("touchmove", async function(event) {
-      if (isDragging) {
-        console.log("touchmove", event.clientX, event.clientY);
-        event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-        let barX = Math.round(event.touches[0].clientX);
-        let barY = Math.round(event.touches[0].clientY);
-        if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
-          lastTouchXY = [barX, barY];
-          let foo = [
-            lastPara.translate[0] + barX - lastDownXY[0],
-            lastPara.translate[1] + barY - lastDownXY[1]
-          ];
-          let bar = {
-            width: lastPara.width,
-            height: lastPara.height,
-            range: lastPara.range,
-            scale: lastPara.scale,
-            translate: foo
-          };
-          d3.select("g").remove();
-          await appendSvg2(bar, lastGeo);
-        }
-      }
-    });
+    // d3.select("#" + eleSvg).on("touchmove", async function(event) {
+    //   if (isDragging) {
+    //     console.log("touchmove", event.clientX, event.clientY);
+    //     event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
+    //     let barX = Math.round(event.touches[0].clientX);
+    //     let barY = Math.round(event.touches[0].clientY);
+    //     if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
+    //       lastTouchXY = [barX, barY];
+    //       let foo = [
+    //         lastPara.translate[0] + barX - lastDownXY[0],
+    //         lastPara.translate[1] + barY - lastDownXY[1]
+    //       ];
+    //       let bar = {
+    //         width: lastPara.width,
+    //         height: lastPara.height,
+    //         range: lastPara.range,
+    //         scale: lastPara.scale,
+    //         translate: foo
+    //       };
+    //       d3.select("g").remove();
+    //       await appendSvg2(bar, lastGeo);
+    //     }
+    //   }
+    // });
 
     d3.select("#" + eleSvg).on("mouseup", async function(event) {
       console.log("mouseup", event.clientX, event.clientY);
