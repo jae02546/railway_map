@@ -12,42 +12,51 @@ async function main() {
   let soCompany = null;
   let soLine = null;
   //現在のgeoデータ
-  let lastGeo = null;
+  let lastGeoMap = null;
   //現在のパラメータ（幅、高さ、経度緯度範囲、スケール、経度0緯度0位置）
   let lastPara = null;
 
-  //json取得
-  // const fileName = "test_N02-21_RailroadSection.geojson";
-  const fileName = "N02-21_RailroadSection.geojson";
-  let geoJson = await getGeoJson(fileName);
+  //路線データjson取得
+  // const railroadFileName = "test_N02-21_RailroadSection.geojson";
+  const rFileName = "N02-21_RailroadSection.geojson";
+  let geoRailroadJson = await getGeoJson(rFileName);
+  //駅データjson取得
+  const sFileName = "N02-21_Station.geojson";
+  let geoStationJson = await getGeoJson(sFileName);
+  // console.log(geoStationJson);
+
+  //事業者路線名map取得
+  let nameMap = await getNameMap(geoRailroadJson);
+  // console.log("getNameMap", nameMap);
+  //駅名map??
+
+  //マウスイベントホルダ
+  let mouseEventsHolder = new MouseEventsHolder();
+  mouseEventsHolder.nameMap = nameMap;
+
+  //右ボタンメニューを無効にする
+  divSvg.addEventListener("contextmenu", function(e) {
+    e.preventDefault();
+  });
 
   //全事業者全路線表示（初期表示）
-  // {
-  //   lastGeo = await getGeometry(geoJson, null, null, null);
-  //   // lastPara = await getLastPara(eleSvg, lastGeo.All);
-  //   lastPara = await getLastPara2(svg, lastGeo.All);
-  //   // await removeElement(eleSvg);
-  //   await removeElement2(svg);
-  //   await appendSvg(eleSvg, lastPara, lastGeo);
-  //   // await appendSvg2(svg, lastPara, lastGeo);
-  // }
-  //全事業者全路線表示（初期表示）
   {
-    lastGeo = await getGeometry(geoJson, null, null, null);
-    // lastPara = await getLastPara(eleSvg, lastGeo.All);
-    lastPara = await getLastPara2(divSvg, lastGeo.All);
+    lastGeoMap = await getGeometry(geoRailroadJson, null, null, null);
+    // console.log("getGeometry", lastGeoMap);
+    lastPara = await getLastPara(divSvg, lastGeoMap);
+    // console.log("getLastPara", lastPara);
     d3
       .select("#" + eleSvg)
       .append("svg")
       .attr("width", lastPara.width)
       .attr("height", lastPara.height);
     d3.select("g").remove();
-    await appendSvg2(lastPara, lastGeo);
+    await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
   }
 
   //事業者リストボックス事業者名追加
   {
-    let foo = await getCompanyList(geoJson);
+    let foo = await getCompanyList(geoRailroadJson);
     foo.forEach(element => {
       let bar = document.createElement("option");
       bar.text = element;
@@ -65,8 +74,7 @@ async function main() {
       soCompany = this.options[this.selectedIndex];
       soLine = null;
       //選択された事業者の路線リスト取得
-      let foo = await getLineList(geoJson, soCompany.text);
-      // console.log(showMain.name, "companyLineList:", soCompany.text, lineList);
+      let foo = await getLineList(geoRailroadJson, soCompany.text);
       //路線リストボックスクリア
       while (lbLine.firstChild) {
         lbLine.removeChild(lbLine.firstChild);
@@ -80,69 +88,87 @@ async function main() {
       });
       //選択事業者全路線表示
       {
-        //選択された事業者をビューポート全体に表示するlastPara取得
-        let bar = await getGeometry(geoJson, null, soCompany.text, null);
-        // lastPara = await getLastPara(eleSvg, bar.Company);
-        lastPara = await getLastPara2(divSvg, bar.Company);
-
-        //これはうまくいく（これだとビューポート外も全路線が表示される）
-        // await removeElement(eleSvg);
-        // await appendSvg3(eleSvg, lastPara, bar.All, bar.Company, null);
-
+        //選択事業者のgeo取得
+        let bar = await getGeometry(
+          geoRailroadJson,
+          null,
+          soCompany.text,
+          null
+        );
+        //選択事業者をビューポートに表示するlastPara取得
+        lastPara = await getLastPara(divSvg, bar);
+        //選択事業者のlastParaで範囲取得
         let baz = await GetViewportRange(lastPara);
-        // let que = await getGeometry2(geoJson, baz, soCompany.text, null);
-        lastGeo = await getGeometry(geoJson, baz, soCompany.text, null);
-        // await removeElement(eleSvg);
-        await removeElement2(divSvg);
-        await appendSvg(eleSvg, lastPara, lastGeo);
+        //その範囲に含まれるgeo取得（選択事業者以外も含む）
+        lastGeoMap = await getGeometry(geoRailroadJson, baz, null, null);
+        //lastSelName設定
+        // lastSelName = [soCompany.text, null];
+        mouseEventsHolder.lastSelName = [soCompany.text, null];
+        //表示
+        d3.select("g").remove();
+        // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
+        await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
       }
     }
   }
 
   //路線リストボックスイベント
   {
-    lbLine.addEventListener("change", async function() {
+    lbLine.addEventListener("change", lineEvent);
+    lbLine.addEventListener("click", lineEvent);
+
+    async function lineEvent() {
       soLine = this.options[this.selectedIndex];
+      //選択事業者選択路線のgeo取得（路線で拡大したい場合はこちら）
+      // let bar = await getGeometry2(geoJson, null, soCompany.text, soLine.text);
+      //選択事業者のgeo取得（事業者で拡大したい場合はこちら）
+      let bar = await getGeometry(geoRailroadJson, null, soCompany.text);
+      //選択路線geoでlastPara取得
+      lastPara = await getLastPara(divSvg, bar);
+      //選択路線のlastParaで範囲取得
       let baz = await GetViewportRange(lastPara);
-      lastGeo = await getGeometry(geoJson, baz, soCompany.text, soLine.text);
-      // await removeElement(eleSvg);
-      await removeElement2(divSvg);
-      await appendSvg(eleSvg, lastPara, lastGeo);
-    });
+      //その範囲に含まれるgeo取得（選択路線以外も含む）
+      lastGeoMap = await getGeometry(geoRailroadJson, baz, null, null);
+      //lastSelName設定
+      lastSelName = [soCompany.text, soCompany.text + "_" + soLine.text];
+      mouseEventsHolder.lastSelName = [
+        soCompany.text,
+        soCompany.text + "_" + soLine.text
+      ];
+      // console.log("lineEvent", lastSelName);
+      //表示
+      d3.select("g").remove();
+      // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
+      await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
+    }
   }
 
   //ドラッグイベント
   {
-    let isDragging = false; //true:ドラッグ中
-    let lastDownXY = null; //マウスダウンxy座標
-    let lastTouchXY = null; //タッチイベントxy座標
+    let isDragging = false; //true:移動中
+    let lastDownXY = null; //ドラッグ開始位置xy座標
 
     d3.select("#" + eleSvg).on("mousedown", async function(event) {
-      console.log("mousedown", event.clientX, event.clientY);
+      // console.log("mousedown", event.clientX, event.clientY);
       if (event.button == 0) {
+        //ドラッグ開始位置保存
         lastDownXY = [event.clientX, event.clientY];
+        //ドラッグ開始
         isDragging = true;
+      } else if (event.button == 2) {
+        //選択を無効にして再表示
+        lastSelName = [null, null];
+        mouseEventsHolder.lastSelName = [null, null];
+        //表示
+        d3.select("g").remove();
+        // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
+        await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
       }
-    });
-
-    d3.select("#" + eleSvg).on("touchstart", async function(event) {
-      console.log(
-        "touchstart",
-        event.touches[0].clientX,
-        event.touches[0].clientY
-      );
-      event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-      lastDownXY = [
-        Math.round(event.touches[0].clientX),
-        Math.round(event.touches[0].clientY)
-      ];
-      lastTouchXY = [lastDownXY[0], lastDownXY[1]];
-      isDragging = true;
     });
 
     d3.select("#" + eleSvg).on("mousemove", async function(event) {
       if (isDragging) {
-        console.log("mousemove", event.clientX, event.clientY);
+        // console.log("mousemove", event.clientX, event.clientY);
         let foo = [
           lastPara.translate[0] + event.clientX - lastDownXY[0],
           lastPara.translate[1] + event.clientY - lastDownXY[1]
@@ -155,85 +181,40 @@ async function main() {
           translate: foo
         };
         d3.select("g").remove();
-        await appendSvg2(bar, lastGeo);
+        // await appendSvg2(bar, lastGeoMap, nameMap, lastSelName);
+        await appendSvg(lastGeoMap, bar, mouseEventsHolder);
       }
     });
 
-    // d3.select("#" + eleSvg).on("touchmove", async function(event) {
-    //   if (isDragging) {
-    //     console.log("touchmove", event.clientX, event.clientY);
-    //     event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-    //     let barX = Math.round(event.touches[0].clientX);
-    //     let barY = Math.round(event.touches[0].clientY);
-    //     if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
-    //       lastTouchXY = [barX, barY];
-    //       let foo = [
-    //         lastPara.translate[0] + barX - lastDownXY[0],
-    //         lastPara.translate[1] + barY - lastDownXY[1]
-    //       ];
-    //       let bar = {
-    //         width: lastPara.width,
-    //         height: lastPara.height,
-    //         range: lastPara.range,
-    //         scale: lastPara.scale,
-    //         translate: foo
-    //       };
-    //       d3.select("g").remove();
-    //       await appendSvg2(bar, lastGeo);
-    //     }
-    //   }
-    // });
-
     d3.select("#" + eleSvg).on("mouseup", async function(event) {
-      console.log("mouseup", event.clientX, event.clientY);
-      let foo = [
-        lastPara.translate[0] + event.clientX - lastDownXY[0],
-        lastPara.translate[1] + event.clientY - lastDownXY[1]
-      ];
-      lastPara = {
-        width: lastPara.width,
-        height: lastPara.height,
-        range: lastPara.range,
-        scale: lastPara.scale,
-        translate: foo
-      };
-      let bar = await GetViewportRange(lastPara);
-      let cText = soCompany != null ? soCompany.text : null;
-      let lText = soLine != null ? soLine.text : null;
-      lastGeo = await getGeometry(geoJson, bar, cText, lText);
-      d3.select("g").remove();
-      await appendSvg2(lastPara, lastGeo);
-      isDragging = false;
-    });
-
-    d3.select("#" + eleSvg).on("touchend", async function(event) {
-      console.log("touchend", event.clientX, event.clientY);
-      event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-      let foo = [
-        lastPara.translate[0] +
-          Math.round(event.changedTouches[0].clientX) -
-          lastDownXY[0],
-        lastPara.translate[1] +
-          Math.round(event.changedTouches[0].clientY) -
-          lastDownXY[1]
-      ];
-      lastPara = {
-        width: lastPara.width,
-        height: lastPara.height,
-        range: lastPara.range,
-        scale: lastPara.scale,
-        translate: foo
-      };
-      let bar = await GetViewportRange(lastPara);
-      let cText = soCompany != null ? soCompany.text : null;
-      let lText = soLine != null ? soLine.text : null;
-      lastGeo = await getGeometry(geoJson, bar, cText, lText);
-      d3.select("g").remove();
-      await appendSvg2(lastPara, lastGeo);
-      isDragging = false;
+      if (event.button == 0) {
+        // console.log("mouseup", event.clientX, event.clientY);
+        let foo = [
+          lastPara.translate[0] + event.clientX - lastDownXY[0],
+          lastPara.translate[1] + event.clientY - lastDownXY[1]
+        ];
+        lastPara = {
+          width: lastPara.width,
+          height: lastPara.height,
+          range: lastPara.range,
+          scale: lastPara.scale,
+          translate: foo
+        };
+        //ドラッグ後のlastParaで範囲取得
+        let bar = await GetViewportRange(lastPara);
+        //その範囲に含まれるgeo取得
+        lastGeoMap = await getGeometry(geoRailroadJson, bar, null, null);
+        //表示
+        d3.select("g").remove();
+        // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
+        await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
+        //ドラッグ終了
+        isDragging = false;
+      }
     });
   }
 
+  //ズーム
   d3.select("#" + eleSvg).on("wheel", async function(event) {
     //前回表示データサイズ(px)
     let lastWidth =
@@ -243,9 +224,9 @@ async function main() {
     //今回scale（event.deltaY +:縮小 -:拡大）
     let scale = lastPara.scale;
     if (event.deltaY >= 0) {
-      scale *= 0.8;
+      scale *= 0.7;
     } else {
-      scale *= 1.2;
+      scale *= 1.5;
     }
     //今回表示データサイズ(px)
     let thisWidth = scale * (lastPara.range[1][0] - lastPara.range[0][0]);
@@ -268,174 +249,13 @@ async function main() {
       scale: scale,
       translate: translate
     };
-
+    //ズーム後のlastParaで範囲取得
     let foo = await GetViewportRange(lastPara);
-    let cText = soCompany != null ? soCompany.text : null;
-    let lText = soLine != null ? soLine.text : null;
-    lastGeo = await getGeometry(geoJson, foo, cText, lText);
+    //その範囲に含まれるgeo取得
+    lastGeoMap = await getGeometry(geoRailroadJson, foo, null, null);
+    //表示
     d3.select("g").remove();
-    await appendSvg2(lastPara, lastGeo);
+    // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
+    await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
   });
-
-  //マウスドラッグイベント（移動）
-  {
-    // let isDragging = false; //true:ドラッグ中
-    // let lastDownXY = null; //マウスダウンxy座標
-    // let lastTouchXY = null; //タッチイベントxy座標
-
-    //開始
-    // svg.addEventListener("mousedown", mousedownEvent);
-    // svg.addEventListener("touchstart", mousedownEvent);
-
-    async function mousedownEvent(event) {
-      if (event.type === "mousedown") {
-        if (event.button == 0) {
-          lastDownXY = [event.clientX, event.clientY];
-          isDragging = true;
-        }
-      } else if (event.type === "touchstart") {
-        event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-        lastDownXY = [
-          Math.round(event.touches[0].clientX),
-          Math.round(event.touches[0].clientY)
-        ];
-        lastTouchXY = [lastDownXY[0], lastDownXY[1]];
-        isDragging = true;
-
-        console.log(
-          funName,
-          "touchstart 21",
-          event.touches[0].clientX,
-          event.touches[0].clientY
-        );
-      }
-    }
-
-    //移動
-    // svg.addEventListener("mousemove", mousemoveEvent);
-    // svg.addEventListener("touchmove", mousemoveEvent);
-
-    async function mousemoveEvent(event) {
-      if (isDragging) {
-        let foo = null;
-        if (event.type === "mousemove") {
-          console.log(funName, "mousemove", event.clientX, event.clientY);
-
-          foo = [
-            lastPara.translate[0] + event.clientX - lastDownXY[0],
-            lastPara.translate[1] + event.clientY - lastDownXY[1]
-          ];
-          let bar = {
-            width: lastPara.width,
-            height: lastPara.height,
-            range: lastPara.range,
-            scale: lastPara.scale,
-            translate: foo
-          };
-          // removeElement(eleSvg);
-          await removeElement2(divSvg);
-          appendSvg(eleSvg, bar, lastGeo);
-        } else if (event.type === "touchmove") {
-          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-          let barX = Math.round(event.touches[0].clientX);
-          let barY = Math.round(event.touches[0].clientY);
-          if (lastTouchXY[0] != barX || lastTouchXY[1] != barY) {
-            lastTouchXY = [barX, barY];
-            foo = [
-              lastPara.translate[0] + barX - lastDownXY[0],
-              lastPara.translate[1] + barY - lastDownXY[1]
-            ];
-            let bar = {
-              width: lastPara.width,
-              height: lastPara.height,
-              range: lastPara.range,
-              scale: lastPara.scale,
-              translate: foo
-            };
-            // removeElement(eleSvg);
-            await removeElement2(divSvg);
-            appendSvg2(eleSvg, bar, lastGeo);
-
-            // console.log(
-            //   funName,
-            //   "touchmove 22",
-            //   event.touches[0].clientX,
-            //   event.touches[0].clientY
-            // );
-          }
-        }
-        // if (foo != null) {
-        //   let bar = {
-        //     width: lastPara.width,
-        //     height: lastPara.height,
-        //     range: lastPara.range,
-        //     scale: lastPara.scale,
-        //     translate: foo
-        //   };
-        //   removeElement(eleSvg);
-        //   appendSvg(eleSvg, bar, lastGeo);
-        // }
-      }
-    }
-
-    //終了
-    // svg.addEventListener("mouseup", mouseupEvent);
-    // svg.addEventListener("touchend", mouseupEvent);
-    // svg.addEventListener("touchcancel", function(e) {
-    //   console.log(
-    //     funName,
-    //     "touchcancel 21"
-    //     // e.changedTouches[0].clientX,
-    //     // e.changedTouches[0].clientY
-    //   );
-    // });
-
-    async function mouseupEvent(event) {
-      //ビューポート外でmouseupしてもイベントは発生しない
-      //ドラッグしたままビューポート外に出た等
-      if (isDragging) {
-        //mouseup時のtranslateを保存
-        let foo = null;
-        if (event.type === "mouseup") {
-          foo = [
-            lastPara.translate[0] + event.clientX - lastDownXY[0],
-            lastPara.translate[1] + event.clientY - lastDownXY[1]
-          ];
-          // alert("mouseup " + foo);
-        } else if (event.type === "touchend") {
-          event.preventDefault(); // デフォルトのブラウザ動作を防ぐ
-          foo = [
-            lastPara.translate[0] +
-              Math.round(event.changedTouches[0].clientX) -
-              lastDownXY[0],
-            lastPara.translate[1] +
-              Math.round(event.changedTouches[0].clientY) -
-              lastDownXY[1]
-          ];
-          console.log(
-            funName,
-            "touchend 21",
-            event.changedTouches[0].clientX,
-            event.changedTouches[0].clientY
-          );
-        }
-        lastPara = {
-          width: lastPara.width,
-          height: lastPara.height,
-          range: lastPara.range,
-          scale: lastPara.scale,
-          translate: foo
-        };
-
-        let bar = await GetViewportRange(lastPara);
-        let cText = soCompany != null ? soCompany.text : null;
-        let lText = soLine != null ? soLine.text : null;
-        lastGeo = await getGeometry(geoJson, bar, cText, lText);
-        // await removeElement(eleSvg);
-        await removeElement2(divSvg);
-        await appendSvg(eleSvg, lastPara, lastGeo);
-      }
-      isDragging = false;
-    }
-  }
 }
