@@ -11,28 +11,32 @@ async function main() {
   //選択中事業者オプション、選択中路線オプション
   let soCompany = null;
   let soLine = null;
-  //現在のgeoデータ
-  let lastGeoMap = null;
+  //現在の路線geoデータ
+  let lastLineGeoMap = null;
+  //現在の駅geoデータ
+  let lastStaGeoMap = null;
   //現在のパラメータ（幅、高さ、経度緯度範囲、スケール、経度0緯度0位置）
   let lastPara = null;
 
   //路線データjson取得
   // const railroadFileName = "test_N02-21_RailroadSection.geojson";
   const rFileName = "N02-21_RailroadSection.geojson";
-  let geoRailroadJson = await getGeoJson(rFileName);
+  let geoLineJson = await getGeoJson(rFileName);
   //駅データjson取得
   const sFileName = "N02-21_Station.geojson";
-  let geoStationJson = await getGeoJson(sFileName);
-  // console.log(geoStationJson);
+  let geoStaJson = await getGeoJson(sFileName);
 
-  //事業者路線名map取得
-  let nameMap = await getNameMap(geoRailroadJson);
-  // console.log("getNameMap", nameMap);
-  //駅名map??
+  //路線名map取得
+  let lineNameMap = await getLineNameMap(geoLineJson);
+  // console.log("getLineNameMap", lineNameMap);
+  //駅名map取得
+  let staNameMap = await getStaNameMap(geoStaJson);
+  // console.log("getStaNameMap", staNameMap);
 
   //マウスイベントホルダ
   let mouseEventsHolder = new MouseEventsHolder();
-  mouseEventsHolder.nameMap = nameMap;
+  mouseEventsHolder.lineNameMap = lineNameMap;
+  mouseEventsHolder.staNameMap = staNameMap;
 
   //右ボタンメニューを無効にする
   divSvg.addEventListener("contextmenu", function(e) {
@@ -41,9 +45,14 @@ async function main() {
 
   //全事業者全路線表示（初期表示）
   {
-    lastGeoMap = await getGeometry(geoRailroadJson, null, null, null);
-    // console.log("getGeometry", lastGeoMap);
-    lastPara = await getLastPara(divSvg, lastGeoMap);
+    //路線geoデータ取得
+    lastLineGeoMap = await getLineGeometry(geoLineJson, null, null, null);
+    // console.log("lastLineGeoMap", lastLineGeoMap);
+    //駅geoデータ取得
+    lastStaGeoMap = await getStaGeometry(geoStaJson, null, null, null, null);
+    // console.log("getStaGeometry", lastStaGeoMap);
+    //パラメータ
+    lastPara = await getLastPara(divSvg, lastLineGeoMap);
     // console.log("getLastPara", lastPara);
     d3
       .select("#" + eleSvg)
@@ -51,12 +60,18 @@ async function main() {
       .attr("width", lastPara.width)
       .attr("height", lastPara.height);
     d3.select("g").remove();
-    await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
+    // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
+    await appendSvg(
+      lastLineGeoMap,
+      lastStaGeoMap,
+      lastPara,
+      mouseEventsHolder
+    );
   }
 
   //事業者リストボックス事業者名追加
   {
-    let foo = await getCompanyList(geoRailroadJson);
+    let foo = await getCompanyList(geoLineJson);
     foo.forEach(element => {
       let bar = document.createElement("option");
       bar.text = element;
@@ -74,7 +89,7 @@ async function main() {
       soCompany = this.options[this.selectedIndex];
       soLine = null;
       //選択された事業者の路線リスト取得
-      let foo = await getLineList(geoRailroadJson, soCompany.text);
+      let foo = await getLineList(geoLineJson, soCompany.text);
       //路線リストボックスクリア
       while (lbLine.firstChild) {
         lbLine.removeChild(lbLine.firstChild);
@@ -89,8 +104,8 @@ async function main() {
       //選択事業者全路線表示
       {
         //選択事業者のgeo取得
-        let bar = await getGeometry(
-          geoRailroadJson,
+        let bar = await getLineGeometry(
+          geoLineJson,
           null,
           soCompany.text,
           null
@@ -99,15 +114,21 @@ async function main() {
         lastPara = await getLastPara(divSvg, bar);
         //選択事業者のlastParaで範囲取得
         let baz = await GetViewportRange(lastPara);
-        //その範囲に含まれるgeo取得（選択事業者以外も含む）
-        lastGeoMap = await getGeometry(geoRailroadJson, baz, null, null);
+        //その範囲に含まれる路線geo取得（選択事業者以外も含む）
+        lastLineGeoMap = await getLineGeometry(geoLineJson, baz, null, null);
+        //その範囲に含まれる駅geo取得（選択事業者以外も含む）
+        lastStaGeoMap = await getStaGeometry(geoStaJson, baz, null, null, null);
         //lastSelName設定
-        // lastSelName = [soCompany.text, null];
         mouseEventsHolder.lastSelName = [soCompany.text, null];
         //表示
         d3.select("g").remove();
-        // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
-        await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
+        // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
+        await appendSvg(
+          lastLineGeoMap,
+          lastStaGeoMap,
+          lastPara,
+          mouseEventsHolder
+        );
       }
     }
   }
@@ -122,15 +143,17 @@ async function main() {
       //選択事業者選択路線のgeo取得（路線で拡大したい場合はこちら）
       // let bar = await getGeometry2(geoJson, null, soCompany.text, soLine.text);
       //選択事業者のgeo取得（事業者で拡大したい場合はこちら）
-      let bar = await getGeometry(geoRailroadJson, null, soCompany.text);
+      let bar = await getLineGeometry(geoLineJson, null, soCompany.text);
       //選択路線geoでlastPara取得
       lastPara = await getLastPara(divSvg, bar);
       //選択路線のlastParaで範囲取得
       let baz = await GetViewportRange(lastPara);
-      //その範囲に含まれるgeo取得（選択路線以外も含む）
-      lastGeoMap = await getGeometry(geoRailroadJson, baz, null, null);
+      //その範囲に含まれる路線geo取得（選択路線以外も含む）
+      lastLineGeoMap = await getLineGeometry(geoLineJson, baz, null, null);
+      //その範囲に含まれる駅geo取得（選択路線以外も含む）
+      lastStaGeoMap = await getStaGeometry(geoStaJson, baz, null, null, null);
       //lastSelName設定
-      lastSelName = [soCompany.text, soCompany.text + "_" + soLine.text];
+      // lastSelName = [soCompany.text, soCompany.text + "_" + soLine.text];
       mouseEventsHolder.lastSelName = [
         soCompany.text,
         soCompany.text + "_" + soLine.text
@@ -139,7 +162,13 @@ async function main() {
       //表示
       d3.select("g").remove();
       // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
-      await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
+      // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
+      await appendSvg(
+        lastLineGeoMap,
+        lastStaGeoMap,
+        lastPara,
+        mouseEventsHolder
+      );
     }
   }
 
@@ -161,8 +190,13 @@ async function main() {
         mouseEventsHolder.lastSelName = [null, null];
         //表示
         d3.select("g").remove();
-        // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
-        await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
+        // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
+        await appendSvg(
+          lastLineGeoMap,
+          lastStaGeoMap,
+          lastPara,
+          mouseEventsHolder
+        );
       }
     });
 
@@ -181,8 +215,8 @@ async function main() {
           translate: foo
         };
         d3.select("g").remove();
-        // await appendSvg2(bar, lastGeoMap, nameMap, lastSelName);
-        await appendSvg(lastGeoMap, bar, mouseEventsHolder);
+        // await appendSvg(lastLineGeoMap, bar, mouseEventsHolder);
+        await appendSvg(lastLineGeoMap, lastStaGeoMap, bar, mouseEventsHolder);
       }
     });
 
@@ -202,12 +236,19 @@ async function main() {
         };
         //ドラッグ後のlastParaで範囲取得
         let bar = await GetViewportRange(lastPara);
-        //その範囲に含まれるgeo取得
-        lastGeoMap = await getGeometry(geoRailroadJson, bar, null, null);
+        //その範囲に含まれる路線geo取得
+        lastLineGeoMap = await getLineGeometry(geoLineJson, bar, null, null);
+        //その範囲に含まれる駅geo取得
+        lastStaGeoMap = await getStaGeometry(geoStaJson, bar, null, null, null);
         //表示
         d3.select("g").remove();
-        // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
-        await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
+        // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
+        await appendSvg(
+          lastLineGeoMap,
+          lastStaGeoMap,
+          lastPara,
+          mouseEventsHolder
+        );
         //ドラッグ終了
         isDragging = false;
       }
@@ -251,11 +292,18 @@ async function main() {
     };
     //ズーム後のlastParaで範囲取得
     let foo = await GetViewportRange(lastPara);
-    //その範囲に含まれるgeo取得
-    lastGeoMap = await getGeometry(geoRailroadJson, foo, null, null);
+    //その範囲に含まれる路線geo取得
+    lastLineGeoMap = await getLineGeometry(geoLineJson, foo, null, null);
+    //その範囲に含まれる駅geo取得
+    lastStaGeoMap = await getStaGeometry(geoStaJson, foo, null, null, null);
     //表示
     d3.select("g").remove();
-    // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
-    await appendSvg(lastGeoMap, lastPara, mouseEventsHolder);
+    // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
+    await appendSvg(
+      lastLineGeoMap,
+      lastStaGeoMap,
+      lastPara,
+      mouseEventsHolder
+    );
   });
 }
