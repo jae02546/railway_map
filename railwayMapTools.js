@@ -21,6 +21,8 @@ const STROKE_COLOR_STA_SEL_L = "black"; //選択駅
 const FILL_COLOR_TEXT = "fuchsia"; //テキスト（路線名、駅名）
 const FILL_COLOR_BACK = "white"; //テキスト背景
 
+const SCALE_SHOW_STATION = 20000; //駅を表示するスケール値
+
 //geojson形式ファイルの読込
 async function getGeoJson(fileName) {
   //引数:fileName:geojson形式ファイル名
@@ -420,12 +422,6 @@ async function getLastPara(svgEle, geoMap) {
   let w = svgEle.offsetWidth;
   let h = svgEle.offsetHeight;
   // console.log(funName, "width:", w, "height:", h);
-  // let svg = d3
-  //   .select("#" + eleName)
-  //   .append("svg")
-  //   .attr("width", w)
-  //   .attr("height", h);
-  // let g = svg.append("g");
   //プロジェクションを作成（初期化）
   let projection = d3.geoMercator();
   projection
@@ -533,56 +529,58 @@ async function appendSvg(lineGeoMap, staGeoMap, lastPara, meHolder) {
       });
   });
 
-  //駅描画
-  staGeoMap.forEach((value, key) => {
-    //クラス名は駅クラスとする
-    //例 事象者:c_001 路線:l_001_001 駅:s_001_001_00001
-    let foo = key.toString().split("_");
-    let cNo = meHolder.staNameMap.CompanyNameMap.get(foo[0]);
-    let lNo = meHolder.staNameMap.LineNameMap.get(foo[0] + "_" + foo[1]);
-    let sNo = meHolder.staNameMap.StaNameMap.get(key);
-    let cClass = "sc_" + cNo; //事業者クラス
-    let lClass = "sl_" + cNo + "_" + lNo; //路線クラス
-    let sClass = "ss_" + cNo + "_" + lNo + "_" + sNo; //駅クラス
-    //色
-    let color = STROKE_COLOR_STA;
-    if (
-      meHolder.lastSelName[1] != null &&
-      meHolder.lastSelName[1] == foo[0] + "_" + foo[1]
-    ) {
-      color = STROKE_COLOR_STA_SEL_L;
-    } else if (
-      meHolder.lastSelName[0] != null &&
-      meHolder.lastSelName[0] == foo[0]
-    ) {
-      color = STROKE_COLOR_STA_SEL_C;
-    }
-    g
-      // .selectAll("." + cClass) //こちらではダメ
-      // .selectAll("." + lClass) //こちらではダメ
-      .selectAll("." + sClass) //ここは1つでよいらしい...
-      .data(value)
-      .enter()
-      .append("path")
-      .attr("class", cClass + " " + lClass + " " + sClass) //事業者,路線,駅
-      // .attr("class", sClass) //事業者,路線,駅
-      .attr("d", pathGenerator)
-      .style("stroke", color)
-      .style("stroke-width", STROKE_WIDTH_STA)
-      .style("fill", "none")
-      .on("mouseover", function(d) {
-        meHolder.mouseoverHandler(d, this.classList);
-      })
-      .on("mouseout", function(d) {
-        meHolder.mouseoutHandler(d, this.classList);
-      })
-      .on("mousedown", function(d) {
-        meHolder.mousedownHandler(d, this.classList);
-      })
-      .on("mouseup", function(d) {
-        meHolder.mouseupHandler(d, this.classList);
-      });
-  });
+  //駅描画（スケールがSCALE_SHOW_STATION以上の場合表示）
+  // console.log(lastPara);
+  if (lastPara.scale >= SCALE_SHOW_STATION) {
+    staGeoMap.forEach((value, key) => {
+      //クラス名は駅クラスとする
+      //例 事象者:c_001 路線:l_001_001 駅:s_001_001_00001
+      let foo = key.toString().split("_");
+      let cNo = meHolder.staNameMap.CompanyNameMap.get(foo[0]);
+      let lNo = meHolder.staNameMap.LineNameMap.get(foo[0] + "_" + foo[1]);
+      let sNo = meHolder.staNameMap.StaNameMap.get(key);
+      let cClass = "sc_" + cNo; //事業者クラス
+      let lClass = "sl_" + cNo + "_" + lNo; //路線クラス
+      let sClass = "ss_" + cNo + "_" + lNo + "_" + sNo; //駅クラス
+      //色
+      let color = STROKE_COLOR_STA;
+      if (
+        meHolder.lastSelName[1] != null &&
+        meHolder.lastSelName[1] == foo[0] + "_" + foo[1]
+      ) {
+        color = STROKE_COLOR_STA_SEL_L;
+      } else if (
+        meHolder.lastSelName[0] != null &&
+        meHolder.lastSelName[0] == foo[0]
+      ) {
+        color = STROKE_COLOR_STA_SEL_C;
+      }
+      g
+        // .selectAll("." + cClass) //こちらではダメ
+        // .selectAll("." + lClass) //こちらではダメ
+        .selectAll("." + sClass) //ここは1つでよいらしい...
+        .data(value)
+        .enter()
+        .append("path")
+        .attr("class", cClass + " " + lClass + " " + sClass) //事業者,路線,駅
+        .attr("d", pathGenerator)
+        .style("stroke", color)
+        .style("stroke-width", STROKE_WIDTH_STA)
+        .style("fill", "none")
+        .on("mouseover", function(d) {
+          meHolder.mouseoverHandler(d, this.classList);
+        })
+        .on("mouseout", function(d) {
+          meHolder.mouseoutHandler(d, this.classList);
+        })
+        .on("mousedown", function(d) {
+          meHolder.mousedownHandler(d, this.classList);
+        })
+        .on("mouseup", function(d) {
+          meHolder.mouseupHandler(d, this.classList);
+        });
+    });
+  }
 
   //テキスト背景、テキスト
   g
@@ -871,7 +869,7 @@ class MouseEventsHolder {
 }
 
 //以下未使用
-//rangeをradianからDegreeに変換
+//rangeをradianからdegreeに変換
 async function rangeFromRadianToDegree(range) {
   //[[xmin, ymin],[xmax, ymax]]
   let xmin = await radianToDegree(range[0][0]);
@@ -881,7 +879,7 @@ async function rangeFromRadianToDegree(range) {
 
   return [[xmin, ymin], [xmax, ymax]];
 }
-//radianからDegreeに変換
+//radianからdegreeに変換
 async function radianToDegree(radian) {
   let degree = radian * (180 / Math.PI);
   return degree;

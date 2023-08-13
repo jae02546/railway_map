@@ -60,13 +60,7 @@ async function main() {
       .attr("width", lastPara.width)
       .attr("height", lastPara.height);
     d3.select("g").remove();
-    // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
-    await appendSvg(
-      lastLineGeoMap,
-      lastStaGeoMap,
-      lastPara,
-      mouseEventsHolder
-    );
+    await appendSvg(lastLineGeoMap, lastStaGeoMap, lastPara, mouseEventsHolder);
   }
 
   //事業者リストボックス事業者名追加
@@ -122,7 +116,6 @@ async function main() {
         mouseEventsHolder.lastSelName = [soCompany.text, null];
         //表示
         d3.select("g").remove();
-        // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
         await appendSvg(
           lastLineGeoMap,
           lastStaGeoMap,
@@ -153,7 +146,6 @@ async function main() {
       //その範囲に含まれる駅geo取得（選択路線以外も含む）
       lastStaGeoMap = await getStaGeometry(geoStaJson, baz, null, null, null);
       //lastSelName設定
-      // lastSelName = [soCompany.text, soCompany.text + "_" + soLine.text];
       mouseEventsHolder.lastSelName = [
         soCompany.text,
         soCompany.text + "_" + soLine.text
@@ -161,8 +153,6 @@ async function main() {
       // console.log("lineEvent", lastSelName);
       //表示
       d3.select("g").remove();
-      // await appendSvg2(lastPara, lastGeoMap, nameMap, lastSelName);
-      // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
       await appendSvg(
         lastLineGeoMap,
         lastStaGeoMap,
@@ -177,6 +167,7 @@ async function main() {
     let isDragging = false; //true:移動中
     let lastDownXY = null; //ドラッグ開始位置xy座標
 
+    //マウスダウン
     d3.select("#" + eleSvg).on("mousedown", async function(event) {
       // console.log("mousedown", event.clientX, event.clientY);
       if (event.button == 0) {
@@ -190,7 +181,6 @@ async function main() {
         mouseEventsHolder.lastSelName = [null, null];
         //表示
         d3.select("g").remove();
-        // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
         await appendSvg(
           lastLineGeoMap,
           lastStaGeoMap,
@@ -200,6 +190,7 @@ async function main() {
       }
     });
 
+    //マウスムーブ
     d3.select("#" + eleSvg).on("mousemove", async function(event) {
       if (isDragging) {
         // console.log("mousemove", event.clientX, event.clientY);
@@ -215,14 +206,18 @@ async function main() {
           translate: foo
         };
         d3.select("g").remove();
-        // await appendSvg(lastLineGeoMap, bar, mouseEventsHolder);
         await appendSvg(lastLineGeoMap, lastStaGeoMap, bar, mouseEventsHolder);
       }
     });
 
-    d3.select("#" + eleSvg).on("mouseup", async function(event) {
-      if (event.button == 0) {
-        // console.log("mouseup", event.clientX, event.clientY);
+    //マウスアップ、マウスリーブ
+    d3.select("#" + eleSvg).on("mouseup", mouseupEvent);
+    d3.select("#" + eleSvg).on("mouseleave", mouseupEvent);
+
+    async function mouseupEvent(event) {
+      // console.log("mouseup", event.clientX, event.clientY, event.button);
+      // if (isDragging && event.button == 0) {
+      if (isDragging) {
         let foo = [
           lastPara.translate[0] + event.clientX - lastDownXY[0],
           lastPara.translate[1] + event.clientY - lastDownXY[1]
@@ -242,7 +237,6 @@ async function main() {
         lastStaGeoMap = await getStaGeometry(geoStaJson, bar, null, null, null);
         //表示
         d3.select("g").remove();
-        // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
         await appendSvg(
           lastLineGeoMap,
           lastStaGeoMap,
@@ -252,10 +246,10 @@ async function main() {
         //ドラッグ終了
         isDragging = false;
       }
-    });
+    }
   }
 
-  //ズーム
+  //ホイール（ズーム）
   d3.select("#" + eleSvg).on("wheel", async function(event) {
     //前回表示データサイズ(px)
     let lastWidth =
@@ -298,12 +292,6 @@ async function main() {
     lastStaGeoMap = await getStaGeometry(geoStaJson, foo, null, null, null);
     //表示
     d3.select("g").remove();
-    // await appendSvg(lastLineGeoMap, lastPara, mouseEventsHolder);
-    await appendSvg(
-      lastLineGeoMap,
-      lastStaGeoMap,
-      lastPara,
-      mouseEventsHolder
-    );
+    await appendSvg(lastLineGeoMap, lastStaGeoMap, lastPara, mouseEventsHolder);
   });
 }
